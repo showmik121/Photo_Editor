@@ -5,7 +5,10 @@ export type SurfaceType =
   | "podium-marble"  // High-end marble pedestal & floor
   | "terracotta"     // Deshi warm terracotta / clay
   | "studio-gradient"// Smooth luxury studio gradient
-  | "clean-white";   // E-commerce white catalog
+  | "clean-white"    // E-commerce white catalog
+  | "concrete-grey"  // Commercial Minimalist: Neutral Grey Concrete (ILYN / Sailor / Apex)
+  | "warm-plaster"   // Commercial Minimalist: Soft Warm Plaster (High-End Apparel)
+  | "offwhite-brush"; // Commercial Minimalist: Studio Off-White with Subtle Brush Texture
 
 export type SurfaceColorTone =
   | "warm-sand"      // #F5EBE1 / warm beige stone
@@ -22,15 +25,15 @@ export interface CustomCardState {
   showTileGrid: boolean; // Subtle grout lines for flatlay
   lightingIntensity: number; // 0 - 100
 
-  // 2. Atmospheric Shadows & Props (from user reference images!)
-  showPalmShadow: boolean;       // Tropical palm leaf shadow & foliage overhang (Image 1)
+  // 2. Atmospheric Shadows & Props
+  showPalmShadow: boolean;       // Tropical palm leaf shadow & foliage overhang
   palmShadowOpacity: number;     // 20 - 100
-  showWindowShadow: boolean;     // Architectural window pane / blinds shadow (Image 5)
-  showWoodenHanger: boolean;     // Realistic wooden hanger prop at top (Image 3)
-  showKinfolkProp: boolean;      // Kinfolk / lookbook magazine prop at bottom right (Image 1)
-  showPampasGrass: boolean;      // Dried pampas botanical prop at bottom (Image 2)
-  showDesertDunes: boolean;      // Desert dune landscape in background (Image 2 & 4)
-  showSunlightGlow: boolean;     // Warm golden sunlight flare / beam (Image 4)
+  showWindowShadow: boolean;     // Architectural window pane / blinds shadow
+  showWoodenHanger: boolean;     // Realistic wooden hanger prop at top
+  showKinfolkProp: boolean;      // Kinfolk / lookbook magazine prop at bottom right
+  showPampasGrass: boolean;      // Dried pampas botanical prop at bottom
+  showDesertDunes: boolean;      // Desert dune landscape in background
+  showSunlightGlow: boolean;     // Warm golden sunlight flare / beam
 
   // 3. Editorial Brand Header (like RAW STITCH / ILLIYEEN)
   showBrandHeader: boolean;
@@ -46,40 +49,66 @@ export interface CustomCardState {
   collectionPosition: "bottom-right" | "bottom-left" | "top-left" | "top-right";
   collectionStyle: "glowing-outline" | "solid-bold" | "minimal-clean";
 
-  // 5. Editorial Micro-Copy / Details (like Timeless Stripes. Built to Last)
+  // 5. Editorial Micro-Copy / Details
   showEditorialCopy: boolean;
   editorialHeading: string;      // e.g. "TIMELESS STRIPES. BUILT TO LAST."
   editorialBullets: string;      // 3 feature lines
   editorialPosition: "bottom-left" | "top-right";
+
+  // 6. Realistic "Floating Ground Shadow" Engine (Tailored for ILYN / Sailor / Apex)
+  floatingShadowEnabled: boolean;     // Automatically generate an authentic floating drop shadow
+  floatingShadowBlur: number;        // 20 - 30px Gaussian blur (default 26px)
+  floatingShadowOpacity: number;     // 0.35 - 0.45 subtle opacity (default 0.40)
+  floatingShadowWidth: number;       // Horizontally stretched radial gradient ellipse width % (default 65)
+  floatingShadowHeight: number;      // Ellipse height (default 26px)
+  floatingShadowDistance: number;    // Vertical offset underneath the bottom hem (default 10px)
+
+  // 7. Brand Frame Overlays (Corner Badges for ILYN / Apex / Sailor)
+  showBrandFrame: boolean;           // Clean corner badges
+  brandFrameTopText: string;         // e.g. "ILYN" or "SAILOR" or "APEX"
+  brandFrameTopSub: string;          // e.g. "EST. 2014" or "STUDIO APPAREL"
+  brandFrameBottomText: string;      // e.g. "KIDS", "SUMMER 26", "PREMIUM COTTON"
+  brandFrameStyle: "minimal-frame" | "corner-bracket" | "clean-monochrome";
 }
 
 export const defaultCustomCardState: CustomCardState = {
-  surfaceType: "tiles",
-  surfaceTone: "warm-sand",
-  showTileGrid: true,
+  surfaceType: "concrete-grey",
+  surfaceTone: "cool-grey",
+  showTileGrid: false,
   lightingIntensity: 90,
-  showPalmShadow: true,
+  showPalmShadow: false,
   palmShadowOpacity: 70,
   showWindowShadow: false,
   showWoodenHanger: false,
-  showKinfolkProp: true,
+  showKinfolkProp: false,
   showPampasGrass: false,
   showDesertDunes: false,
-  showSunlightGlow: true,
-  showBrandHeader: true,
-  brandName: "RAW STITCH",
-  brandTagline: "PREMIUM STREETWEAR",
+  showSunlightGlow: false,
+  showBrandHeader: false,
+  brandName: "ILYN",
+  brandTagline: "PREMIUM APPAREL",
   brandPosition: "top-left",
   brandStyle: "minimal",
-  showCollectionText: true,
-  collectionSeason: "AW26",
-  collectionSub: "NEW ARRIVALS",
+  showCollectionText: false,
+  collectionSeason: "SUMMER 26",
+  collectionSub: "NEW DROP",
   collectionPosition: "bottom-right",
-  collectionStyle: "glowing-outline",
-  showEditorialCopy: true,
-  editorialHeading: "TIMELESS STRIPES. BUILT TO LAST.",
-  editorialBullets: "Clean design.\nPremium fabric.\nEveryday comfort.",
+  collectionStyle: "minimal-clean",
+  showEditorialCopy: false,
+  editorialHeading: "CRAFTED FOR DISTINCTION",
+  editorialBullets: "Handpicked cotton.\nImpeccable cut.\nSubtle luxury.",
   editorialPosition: "bottom-left",
+  floatingShadowEnabled: true,
+  floatingShadowBlur: 26,
+  floatingShadowOpacity: 0.40,
+  floatingShadowWidth: 65,
+  floatingShadowHeight: 26,
+  floatingShadowDistance: 10,
+  showBrandFrame: true,
+  brandFrameTopText: "ILYN",
+  brandFrameTopSub: "EST. 2014",
+  brandFrameBottomText: "SUMMER 26",
+  brandFrameStyle: "minimal-frame",
 };
 
 export interface StudioPreset {
@@ -99,6 +128,123 @@ export interface StudioPreset {
 }
 
 export const STUDIO_PRESETS: StudioPreset[] = [
+  {
+    id: "ilyn-concrete",
+    nameBn: "আইলিন নিউট্রাল গ্রে কংক্রিট",
+    nameEn: "Neutral Grey Concrete",
+    taglineBn: "আর্কিটেকচারাল কংক্রিট ব্যাকড্রপ, ফ্লোটিং গ্রাউন্ড শ্যাডো ও আইলিন মিনিমাল ফ্রেম",
+    taglineEn: "High-fashion grey concrete, floating drop shadow & ILYN brand frame",
+    badgeTagBn: "আইলিন স্টুডিও",
+    bgGradient: "from-slate-200 via-stone-200 to-slate-300",
+    pedestalType: "none",
+    ambientLighting: "radial-gradient(circle at 50% 15%, rgba(255, 255, 255, 0.45) 0%, transparent 60%)",
+    lightingTone: "cool-studio",
+    decorativeSvgType: "clean",
+    textColor: "text-slate-900",
+    cardConfig: {
+      surfaceType: "concrete-grey",
+      surfaceTone: "cool-grey",
+      floatingShadowEnabled: true,
+      floatingShadowBlur: 26,
+      floatingShadowOpacity: 0.40,
+      floatingShadowWidth: 65,
+      floatingShadowHeight: 26,
+      floatingShadowDistance: 12,
+      showBrandFrame: true,
+      brandFrameTopText: "ILYN",
+      brandFrameTopSub: "EST. 2014",
+      brandFrameBottomText: "SUMMER 26",
+      brandFrameStyle: "minimal-frame",
+      showBrandHeader: false,
+      showCollectionText: false,
+      showPalmShadow: false,
+      showWindowShadow: false,
+      showWoodenHanger: false,
+      showKinfolkProp: false,
+      showPampasGrass: false,
+      showDesertDunes: false,
+      showSunlightGlow: false,
+      showEditorialCopy: false,
+    },
+  },
+  {
+    id: "sailor-plaster",
+    nameBn: "সেইলর সফট ওয়ার্ম প্লাস্টার",
+    nameEn: "Soft Warm Plaster",
+    taglineBn: "আর্টিসান প্লাস্টার ওয়াল, ন্যাচারাল ফ্লোটিং শ্যাডো ও কিডস/ক্যাজুয়াল কর্নার ট্যাগ",
+    taglineEn: "Artisan warm plaster, soft floating drop shadow & Sailor category frame",
+    badgeTagBn: "সেইলর ক্যাজুয়াল",
+    bgGradient: "from-stone-100 via-amber-50 to-stone-200",
+    pedestalType: "none",
+    ambientLighting: "radial-gradient(circle at 50% 20%, rgba(254, 243, 199, 0.35) 0%, transparent 65%)",
+    lightingTone: "warm-gold",
+    decorativeSvgType: "clean",
+    textColor: "text-stone-900",
+    cardConfig: {
+      surfaceType: "warm-plaster",
+      surfaceTone: "warm-sand",
+      floatingShadowEnabled: true,
+      floatingShadowBlur: 28,
+      floatingShadowOpacity: 0.38,
+      floatingShadowWidth: 68,
+      floatingShadowHeight: 28,
+      floatingShadowDistance: 10,
+      showBrandFrame: true,
+      brandFrameTopText: "SAILOR",
+      brandFrameTopSub: "CASUAL APPAREL",
+      brandFrameBottomText: "KIDS",
+      brandFrameStyle: "corner-bracket",
+      showBrandHeader: false,
+      showCollectionText: false,
+      showPalmShadow: false,
+      showWindowShadow: false,
+      showWoodenHanger: false,
+      showKinfolkProp: false,
+      showPampasGrass: false,
+      showDesertDunes: false,
+      showSunlightGlow: false,
+      showEditorialCopy: false,
+    },
+  },
+  {
+    id: "apex-brush",
+    nameBn: "এপেক্স অফ-হোয়াইট ব্রাশ টেক্সচার",
+    nameEn: "Studio Off-White Brush",
+    taglineBn: "হাই-ফ্যাশন অফ-হোয়াইট ব্রাশ স্ট্রোক, প্রিসাইজ ফ্লোটিং শ্যাডো ও এপেক্স ব্যাজ",
+    taglineEn: "Off-white with subtle brush strokes, floating commercial shadow & Apex badge",
+    badgeTagBn: "এপেক্স প্রিমিয়াম",
+    bgGradient: "from-stone-50 via-zinc-100 to-stone-100",
+    pedestalType: "none",
+    ambientLighting: "radial-gradient(circle at 50% 25%, rgba(255, 255, 255, 0.6) 0%, transparent 70%)",
+    lightingTone: "pure-white",
+    decorativeSvgType: "clean",
+    textColor: "text-stone-900",
+    cardConfig: {
+      surfaceType: "offwhite-brush",
+      surfaceTone: "pure-white",
+      floatingShadowEnabled: true,
+      floatingShadowBlur: 24,
+      floatingShadowOpacity: 0.42,
+      floatingShadowWidth: 62,
+      floatingShadowHeight: 24,
+      floatingShadowDistance: 14,
+      showBrandFrame: true,
+      brandFrameTopText: "APEX",
+      brandFrameTopSub: "SIGNATURE LINE",
+      brandFrameBottomText: "SS26",
+      brandFrameStyle: "clean-monochrome",
+      showBrandHeader: false,
+      showCollectionText: false,
+      showPalmShadow: false,
+      showWindowShadow: false,
+      showWoodenHanger: false,
+      showKinfolkProp: false,
+      showPampasGrass: false,
+      showDesertDunes: false,
+      showSunlightGlow: false,
+      showEditorialCopy: false,
+    },
+  },
   {
     id: "streetwear-flatlay",
     nameBn: "র' স্টিচ ক্যালিফোর্নিয়া টাইলস",

@@ -40,6 +40,9 @@ export function CardCustomizer({
   };
 
   const surfaces: { id: SurfaceType; nameBn: string; nameEn: string; icon: string }[] = [
+    { id: "concrete-grey", nameBn: "আইলিন নিউট্রাল কংক্রিট", nameEn: "Neutral Grey Concrete", icon: "🏢" },
+    { id: "warm-plaster", nameBn: "সেইলর সফট প্লাস্টার", nameEn: "Soft Warm Plaster", icon: "🏛️" },
+    { id: "offwhite-brush", nameBn: "এপেক্স অফ-হোয়াইট ব্রাশ", nameEn: "Studio Off-White Brush", icon: "🖌️" },
     { id: "tiles", nameBn: "ক্যালিফোর্নিয়া টাইলস", nameEn: "Ceramic Tiles", icon: "🧱" },
     { id: "desert-arch", nameBn: "ইলিয়িন ডেজার্ট আর্চ", nameEn: "Desert Arch", icon: "🏜️" },
     { id: "wall-minimal", nameBn: "মিনিমাল প্লাস্টার ওয়াল", nameEn: "Studio Wall", icon: "🏢" },
@@ -270,6 +273,105 @@ export function CardCustomizer({
       </div>
 
       {/* =================================================================== */}
+      {/* 2B. REALISTIC FLOATING GROUND SHADOW ENGINE                         */}
+      {/* =================================================================== */}
+      <div className="space-y-3 pt-2 border-t border-stone-200">
+        <div className="flex items-center justify-between">
+          <label className="text-xs font-bold text-stone-800 flex items-center gap-1.5">
+            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+            <span>
+              {lang === "bn"
+                ? "ফ্লোটিং গ্রাউন্ড শ্যাডো ইঞ্জিন (Floating Drop Shadow)"
+                : "Floating Ground Shadow Engine"}
+            </span>
+          </label>
+          <input
+            type="checkbox"
+            checked={cardState.floatingShadowEnabled}
+            onChange={(e) => update({ floatingShadowEnabled: e.target.checked })}
+            className="w-4 h-4 accent-amber-500 rounded cursor-pointer"
+          />
+        </div>
+        <p className="text-[11px] text-stone-500">
+          {lang === "bn"
+            ? "পোশাকের নিচে প্রফেশনাল কমার্শিয়াল সফট ইলিপ্স শ্যাডো (ILYN / Sailor / Apex লুক)"
+            : "Authentic commercial floating drop shadow under the garment hem"}
+        </p>
+
+        {cardState.floatingShadowEnabled && (
+          <div className="p-3.5 rounded-2xl bg-white border border-stone-200 shadow-2xs space-y-3">
+            {/* Opacity slider */}
+            <div className="space-y-1">
+              <div className="flex justify-between text-[11px] font-semibold text-stone-700">
+                <span>{lang === "bn" ? "শ্যাডোর অপাসিটি (Opacity):" : "Shadow Opacity:"}</span>
+                <span className="text-amber-600 font-mono">{Math.round((cardState.floatingShadowOpacity || 0.40) * 100)}%</span>
+              </div>
+              <input
+                type="range"
+                min="0.15"
+                max="0.80"
+                step="0.05"
+                value={cardState.floatingShadowOpacity ?? 0.40}
+                onChange={(e) => update({ floatingShadowOpacity: parseFloat(e.target.value) })}
+                className="w-full accent-amber-500 h-1.5 bg-stone-200 rounded-lg cursor-pointer"
+              />
+            </div>
+
+            {/* Blur slider */}
+            <div className="space-y-1">
+              <div className="flex justify-between text-[11px] font-semibold text-stone-700">
+                <span>{lang === "bn" ? "গউসিয়ান ব্লার (Gaussian Blur):" : "Gaussian Blur:"}</span>
+                <span className="text-amber-600 font-mono">{cardState.floatingShadowBlur ?? 26}px</span>
+              </div>
+              <input
+                type="range"
+                min="12"
+                max="45"
+                step="1"
+                value={cardState.floatingShadowBlur ?? 26}
+                onChange={(e) => update({ floatingShadowBlur: parseInt(e.target.value, 10) })}
+                className="w-full accent-amber-500 h-1.5 bg-stone-200 rounded-lg cursor-pointer"
+              />
+            </div>
+
+            {/* Width slider */}
+            <div className="space-y-1">
+              <div className="flex justify-between text-[11px] font-semibold text-stone-700">
+                <span>{lang === "bn" ? "শ্যাডোর প্রশস্ততা (Width Stretch):" : "Shadow Width:"}</span>
+                <span className="text-amber-600 font-mono">{cardState.floatingShadowWidth ?? 65}%</span>
+              </div>
+              <input
+                type="range"
+                min="35"
+                max="95"
+                step="5"
+                value={cardState.floatingShadowWidth ?? 65}
+                onChange={(e) => update({ floatingShadowWidth: parseInt(e.target.value, 10) })}
+                className="w-full accent-amber-500 h-1.5 bg-stone-200 rounded-lg cursor-pointer"
+              />
+            </div>
+
+            {/* Vertical Distance slider */}
+            <div className="space-y-1">
+              <div className="flex justify-between text-[11px] font-semibold text-stone-700">
+                <span>{lang === "bn" ? "গ্রাউন্ড ডিসট্যান্স (Ground Distance):" : "Ground Distance:"}</span>
+                <span className="text-amber-600 font-mono">{cardState.floatingShadowDistance ?? 10}px</span>
+              </div>
+              <input
+                type="range"
+                min="-10"
+                max="40"
+                step="2"
+                value={cardState.floatingShadowDistance ?? 10}
+                onChange={(e) => update({ floatingShadowDistance: parseInt(e.target.value, 10) })}
+                className="w-full accent-amber-500 h-1.5 bg-stone-200 rounded-lg cursor-pointer"
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* =================================================================== */}
       {/* 3. EDITORIAL BRAND HEADER / SIGNATURE                               */}
       {/* =================================================================== */}
       <div className="space-y-3 pt-2 border-t border-stone-200">
@@ -344,6 +446,99 @@ export function CardCustomizer({
                   <option value="korean-craft">{lang === "bn" ? "কোরিয়ান ক্রাফট" : "Korean Craft"}</option>
                 </select>
               </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* =================================================================== */}
+      {/* 3B. COMMERCIAL BRAND FRAME OVERLAYS (CORNER BADGES)                 */}
+      {/* =================================================================== */}
+      <div className="space-y-3 pt-2 border-t border-stone-200">
+        <div className="flex items-center justify-between">
+          <label className="text-xs font-bold text-stone-800 flex items-center gap-1.5">
+            <Tag className="w-3.5 h-3.5 text-amber-500" />
+            <span>
+              {lang === "bn"
+                ? "কমার্শিয়াল ব্র্যান্ড ফ্রেম ও কর্নার ব্যাজ (Brand Frame Overlays)"
+                : "Commercial Brand Frame Overlays"}
+            </span>
+          </label>
+          <input
+            type="checkbox"
+            checked={cardState.showBrandFrame}
+            onChange={(e) => update({ showBrandFrame: e.target.checked })}
+            className="w-4 h-4 accent-amber-500 rounded cursor-pointer"
+          />
+        </div>
+        <p className="text-[11px] text-stone-500">
+          {lang === "bn"
+            ? "উপরে-বামে ব্র্যান্ড ট্যাগ ফ্রেম ও নিচে-ডানে ক্যাটাগরি ব্যাজ (ILYN / Sailor স্টাইল)"
+            : "Top-left brand tag frame & bottom-right category badge"}
+        </p>
+
+        {cardState.showBrandFrame && (
+          <div className="p-3.5 rounded-2xl bg-white border border-stone-200 shadow-2xs space-y-3">
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="text-[11px] font-semibold text-stone-600">
+                  {lang === "bn" ? "টপ ব্র্যান্ড নাম:" : "Top Brand Tag:"}
+                </label>
+                <input
+                  type="text"
+                  value={cardState.brandFrameTopText ?? "ILYN"}
+                  onChange={(e) => update({ brandFrameTopText: e.target.value })}
+                  placeholder="ILYN / SAILOR / APEX"
+                  className="w-full mt-1 px-3 py-1.5 rounded-lg bg-stone-50 border border-stone-200 text-xs text-stone-900 font-bold focus:bg-white focus:outline-none focus:border-amber-400"
+                />
+              </div>
+
+              <div>
+                <label className="text-[11px] font-semibold text-stone-600">
+                  {lang === "bn" ? "টপ সাব-ট্যাগ:" : "Top Sub-tag:"}
+                </label>
+                <input
+                  type="text"
+                  value={cardState.brandFrameTopSub ?? "EST. 2014"}
+                  onChange={(e) => update({ brandFrameTopSub: e.target.value })}
+                  placeholder="EST. 2014 / STUDIO"
+                  className="w-full mt-1 px-3 py-1.5 rounded-lg bg-stone-50 border border-stone-200 text-xs text-stone-900 focus:bg-white focus:outline-none focus:border-amber-400"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-[11px] font-semibold text-stone-600">
+                {lang === "bn" ? "নিচের ক্যাটাগরি ব্যাজ:" : "Bottom Category Badge:"}
+              </label>
+              <input
+                type="text"
+                value={cardState.brandFrameBottomText ?? "SUMMER 26"}
+                onChange={(e) => update({ brandFrameBottomText: e.target.value })}
+                placeholder="KIDS / SUMMER 26 / PANJABI"
+                className="w-full mt-1 px-3 py-1.5 rounded-lg bg-stone-50 border border-stone-200 text-xs text-stone-900 font-semibold focus:bg-white focus:outline-none focus:border-amber-400"
+              />
+            </div>
+
+            <div>
+              <label className="text-[10px] font-semibold text-stone-600">
+                {lang === "bn" ? "ফ্রেম ও ব্যাজ স্টাইল:" : "Badge Style:"}
+              </label>
+              <select
+                value={cardState.brandFrameStyle ?? "minimal-frame"}
+                onChange={(e) => update({ brandFrameStyle: e.target.value as any })}
+                className="w-full mt-1 px-2.5 py-1.5 rounded-lg bg-stone-50 border border-stone-200 text-xs text-stone-900 focus:bg-white focus:outline-none focus:border-amber-400"
+              >
+                <option value="minimal-frame">
+                  {lang === "bn" ? "মিনিমাল বর্ডার ফ্রেম (Minimal Frame)" : "Minimal Border Frame"}
+                </option>
+                <option value="corner-bracket">
+                  {lang === "bn" ? "কর্নার ব্র্যাকেট ব্যাজ (Corner Bracket)" : "Corner Bracket"}
+                </option>
+                <option value="clean-monochrome">
+                  {lang === "bn" ? "মনোক্রম ক্লিন ট্যাগ (Clean Monochrome)" : "Clean Monochrome"}
+                </option>
+              </select>
             </div>
           </div>
         )}

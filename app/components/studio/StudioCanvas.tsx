@@ -283,6 +283,16 @@ export function StudioCanvas({
 
   // Surface Tone Background Styling
   const getSurfaceBackground = () => {
+    if (card.surfaceType === "concrete-grey") {
+      return "bg-gradient-to-br from-[#F1F5F9] via-[#E2E8F0] to-[#CBD5E1]";
+    }
+    if (card.surfaceType === "warm-plaster") {
+      return "bg-gradient-to-br from-[#FAF7F2] via-[#F3ECE1] to-[#E8DFC8]";
+    }
+    if (card.surfaceType === "offwhite-brush") {
+      return "bg-gradient-to-br from-[#FCFBF9] via-[#F8F6F0] to-[#EFECE5]";
+    }
+
     switch (card.surfaceTone) {
       case "warm-sand":
         return "bg-gradient-to-br from-[#F5EBE1] via-[#EFE6DA] to-[#E3D7C7]";
@@ -434,6 +444,80 @@ export function StudioCanvas({
               <path d="M10 0 Q 35 45 70 80 T 95 100" stroke="white" strokeWidth="0.8" fill="none" />
               <path d="M0 40 Q 40 60 60 100" stroke="white" strokeWidth="0.5" fill="none" />
             </svg>
+          </div>
+        )}
+
+        {/* D. Neutral Grey Concrete (ILYN / Apex / Sailor Commercial Studio) */}
+        {card.surfaceType === "concrete-grey" && (
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            {/* Fine Architectural Concrete Speckled Grain */}
+            <svg className="absolute inset-0 w-full h-full opacity-35" xmlns="http://www.w3.org/2000/svg">
+              <filter id="concreteNoise">
+                <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch" />
+                <feColorMatrix type="matrix" values="0 0 0 0 0.15  0 0 0 0 0.2  0 0 0 0 0.25  0 0 0 0.18 0" />
+              </filter>
+              <rect width="100%" height="100%" filter="url(#concreteNoise)" />
+            </svg>
+            {/* Soft overhead studio directional key light */}
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.45) 0%, rgba(203, 213, 225, 0.1) 50%, transparent 80%)",
+              }}
+            />
+          </div>
+        )}
+
+        {/* E. Soft Warm Plaster (High-End Fashion & Artisan Wear) */}
+        {card.surfaceType === "warm-plaster" && (
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            {/* Organic Venetian Plaster Stucco Wash */}
+            <svg className="absolute inset-0 w-full h-full opacity-25" viewBox="0 0 800 800" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="plasterWash" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.45" />
+                  <stop offset="50%" stopColor="#D6C7B2" stopOpacity="0.15" />
+                  <stop offset="100%" stopColor="#B49D82" stopOpacity="0.3" />
+                </linearGradient>
+              </defs>
+              <path d="M0 140 Q 260 80 500 160 T 800 120 L 800 800 L 0 800 Z" fill="url(#plasterWash)" />
+              <path d="M0 320 Q 340 240 620 330 T 800 280 L 800 800 L 0 800 Z" fill="#E8DFC8" opacity="0.25" />
+            </svg>
+            {/* Warm daylight beam */}
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "radial-gradient(circle at 45% 20%, rgba(254, 243, 199, 0.35) 0%, rgba(245, 235, 224, 0.15) 55%, transparent 85%)",
+              }}
+            />
+          </div>
+        )}
+
+        {/* F. Studio Off-White with Subtle Brush Texture (Apex Lookbook) */}
+        {card.surfaceType === "offwhite-brush" && (
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            {/* Delicate Fine Diagonal Brush Stroke Texture */}
+            <svg className="absolute inset-0 w-full h-full opacity-20" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <pattern id="brushHatch" width="60" height="60" patternUnits="userSpaceOnUse" patternTransform="rotate(25)">
+                  <line x1="0" y1="10" x2="60" y2="10" stroke="#78716C" strokeWidth="0.8" strokeDasharray="18 12 8 22" />
+                  <line x1="0" y1="25" x2="60" y2="25" stroke="#A8A29E" strokeWidth="0.6" strokeDasharray="25 8 15 12" />
+                  <line x1="0" y1="40" x2="60" y2="40" stroke="#78716C" strokeWidth="0.9" strokeDasharray="12 18 20 10" />
+                  <line x1="0" y1="55" x2="60" y2="55" stroke="#A8A29E" strokeWidth="0.5" strokeDasharray="30 10 10 10" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#brushHatch)" />
+            </svg>
+            {/* High-fashion pure studio fill light */}
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "radial-gradient(circle at 50% 25%, rgba(255, 255, 255, 0.75) 0%, rgba(248, 246, 240, 0.2) 60%, transparent 90%)",
+              }}
+            />
           </div>
         )}
 
@@ -605,6 +689,63 @@ export function StudioCanvas({
         )}
 
         {/* ================================================================= */}
+        {/* 4B. COMMERCIAL BRAND FRAME OVERLAYS (ILYN / SAILOR / APEX CORNERS) */}
+        {/* ================================================================= */}
+        {card.showBrandFrame && (
+          <>
+            {/* Top-Left: Clean Brand Tag Frame */}
+            <div className="absolute top-5 left-5 z-30 pointer-events-none select-none animate-in fade-in duration-300">
+              {card.brandFrameStyle === "corner-bracket" ? (
+                <div className="relative pl-3 pt-1 border-l-2 border-t-2 border-stone-900/80 pr-2 pb-1 bg-white/70 backdrop-blur-xs rounded-tl-sm">
+                  <div className="text-[11px] sm:text-xs font-black tracking-[0.28em] text-stone-950 uppercase font-sans">
+                    {card.brandFrameTopText || "SAILOR"}
+                  </div>
+                  {card.brandFrameTopSub && (
+                    <div className="text-[8px] sm:text-[9px] font-bold tracking-[0.2em] text-stone-500 uppercase mt-0.5">
+                      {card.brandFrameTopSub}
+                    </div>
+                  )}
+                </div>
+              ) : card.brandFrameStyle === "clean-monochrome" ? (
+                <div className="px-3 py-1.5 rounded-lg bg-stone-950 text-white shadow-md flex flex-col items-start border border-stone-800">
+                  <div className="text-[10px] sm:text-[11px] font-black tracking-[0.25em] uppercase font-sans">
+                    {card.brandFrameTopText || "APEX"}
+                  </div>
+                  {card.brandFrameTopSub && (
+                    <div className="text-[7px] sm:text-[8px] font-semibold tracking-[0.2em] text-stone-300 uppercase">
+                      {card.brandFrameTopSub}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-white/90 backdrop-blur-md border border-stone-300/90 shadow-sm text-stone-900 flex flex-col items-start">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                    <span className="text-xs sm:text-sm font-black tracking-[0.25em] text-stone-950 uppercase font-sans">
+                      {card.brandFrameTopText || "ILYN"}
+                    </span>
+                  </div>
+                  {card.brandFrameTopSub && (
+                    <div className="text-[8px] sm:text-[9px] font-bold tracking-[0.2em] text-stone-500 uppercase mt-0.5 pl-3">
+                      {card.brandFrameTopSub}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Bottom-Right: Category Tag (e.g. "KIDS", "SUMMER 26") */}
+            <div className="absolute bottom-5 right-5 z-30 pointer-events-none select-none animate-in fade-in duration-300">
+              <div className="px-3 sm:px-3.5 py-1.5 rounded-lg bg-stone-900/90 text-white backdrop-blur-md border border-stone-800 shadow-md flex items-center gap-1.5">
+                <span className="text-[10px] sm:text-xs font-black tracking-[0.22em] uppercase font-sans">
+                  {card.brandFrameBottomText || "SUMMER 26"}
+                </span>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* ================================================================= */}
         {/* 5. BIG HERO COLLECTION TYPOGRAPHY (AW26 / NEW ARRIVALS)           */}
         {/* ================================================================= */}
         {card.showCollectionText && (
@@ -721,7 +862,7 @@ export function StudioCanvas({
         {/* ================================================================= */}
         {/* 8. 3D REALISTIC CONTACT GROUND SHADOW                             */}
         {/* ================================================================= */}
-        {transform.shadowEnabled && (
+        {transform.shadowEnabled && !card.floatingShadowEnabled && (
           <div
             className="absolute bottom-16 sm:bottom-20 inset-x-0 flex justify-center pointer-events-none z-15 transition-transform duration-75"
             style={{
@@ -734,6 +875,33 @@ export function StudioCanvas({
                 opacity: transform.shadowOpacity,
                 transform: `scale(${transform.scale})`,
               }}
+            />
+          </div>
+        )}
+
+        {/* ================================================================= */}
+        {/* 8B. REALISTIC "FLOATING GROUND SHADOW" ENGINE (ILYN / APEX / SAILOR)*/}
+        {/* ================================================================= */}
+        {card.floatingShadowEnabled && (
+          <div
+            className="absolute inset-x-0 flex justify-center pointer-events-none z-15 transition-transform duration-75"
+            style={{
+              bottom: `${Math.max(12, Math.min(130, 24 - (transform.offsetY * 0.35) + (card.floatingShadowDistance || 10)))}px`,
+              transform: `translateX(${transform.offsetX}px)`,
+            }}
+          >
+            {/* Horizontally stretched radial gradient ellipse underneath the bottom hem */}
+            <div
+              style={{
+                width: `${Math.min(92, Math.max(30, Math.round((card.floatingShadowWidth || 65) * (transform.scale || 1))))}%`,
+                height: `${card.floatingShadowHeight || 26}px`,
+                opacity: card.floatingShadowOpacity || 0.40,
+                filter: `blur(${card.floatingShadowBlur || 24}px)`,
+                background:
+                  "radial-gradient(ellipse at center, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.55) 40%, rgba(71, 85, 105, 0.2) 65%, transparent 80%)",
+                borderRadius: "50%",
+              }}
+              className="transform-gpu transition-all"
             />
           </div>
         )}

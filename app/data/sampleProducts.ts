@@ -216,6 +216,17 @@ export function svgToDataUrl(svgString: string): string {
 
 export const SAMPLE_PRODUCTS: SampleProduct[] = [
   {
+    id: "sample-ilyn-panjabi",
+    nameBn: "আইলিন সিগনেচার পাঞ্জাবি",
+    nameEn: "ILYN Signature Panjabi",
+    categoryBn: "প্রিমিয়াম এপারেল",
+    categoryEn: "Premium Apparel",
+    defaultPrice: "৩,৯৫০",
+    defaultDiscount: "NEW",
+    rawUrl: "/samples/panjabi-raw.jpg",
+    cutoutSvg: PANJABI_CUTOUT_SVG,
+  },
+  {
     id: "sample-panjabi",
     nameBn: "রয়্যাল এমারেল্ড পাঞ্জাবি",
     nameEn: "Royal Emerald Panjabi",
