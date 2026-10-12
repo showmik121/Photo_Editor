@@ -69,7 +69,7 @@ export function Navbar({ lang, onToggleLang }: NavbarProps) {
         </nav>
 
         {/* Right Action Buttons */}
-        <div className="hidden sm:flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-4">
           {/* Dual Language Switcher Button */}
           <button
             onClick={onToggleLang}
@@ -96,19 +96,25 @@ export function Navbar({ lang, onToggleLang }: NavbarProps) {
           </a>
         </div>
 
-        {/* Mobile Menu Button */}
-        <div className="flex md:hidden items-center gap-2">
+        {/* Mobile Menu Button & Quick Studio CTA */}
+        <div className="flex md:hidden items-center gap-1.5 sm:gap-2">
+          <a
+            href="/studio"
+            className="px-3.5 py-1.5 rounded-full font-bold text-xs text-stone-950 bg-amber-400 hover:bg-amber-300 shadow-2xs"
+          >
+            {lang === "bn" ? "স্টুডিও" : "Studio"}
+          </a>
           <button
             onClick={onToggleLang}
-            className="p-2 rounded-lg bg-stone-100 text-stone-700 border border-stone-200 text-xs font-bold"
+            className="px-2.5 py-1.5 rounded-lg bg-stone-100 text-stone-700 border border-stone-200 text-xs font-bold"
           >
             {lang === "bn" ? "EN" : "বাং"}
           </button>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-2 rounded-xl bg-stone-100 text-stone-700 hover:text-stone-950 border border-stone-200"
+            className="p-1.5 rounded-xl bg-stone-100 text-stone-700 hover:text-stone-950 border border-stone-200"
           >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
         </div>
       </div>

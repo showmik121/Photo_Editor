@@ -215,53 +215,53 @@ function StudioWorkspace() {
     <div className="min-h-screen bg-[#F8FAFC] text-stone-900 flex flex-col font-sans selection:bg-amber-400 selection:text-stone-950">
       {/* Studio Top Navigation Bar */}
       <header className="sticky top-0 z-40 w-full border-b border-stone-200/80 bg-white/90 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             <Link
               href="/"
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-stone-600 hover:text-stone-900 px-2.5 py-1.5 rounded-xl hover:bg-stone-100 transition-colors"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-stone-600 hover:text-stone-900 px-2 py-1.5 rounded-xl hover:bg-stone-100 transition-colors"
             >
-              <ArrowLeft className="w-4 h-4" />
-              <span>{lang === "bn" ? "হোমে ফিরুন" : "Back to Home"}</span>
+              <ArrowLeft className="w-4 h-4 shrink-0" />
+              <span className="hidden sm:inline">{lang === "bn" ? "হোমে ফিরুন" : "Back to Home"}</span>
             </Link>
-            <div className="h-4 w-px bg-stone-200" />
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-amber-400 flex items-center justify-center shadow-xs">
-                <Sparkles className="w-4 h-4 text-stone-950" />
+            <div className="h-4 w-px bg-stone-200 hidden sm:block" />
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-amber-400 flex items-center justify-center shadow-xs shrink-0">
+                <Sparkles className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-stone-950" />
               </div>
-              <span className="font-bold text-base tracking-tight text-stone-900">
+              <span className="font-bold text-sm sm:text-base tracking-tight text-stone-900">
                 ছবি <span className="text-amber-500">Studio</span>
               </span>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             {/* Aspect Ratio Selector (Square vs Vertical) */}
             <AspectSelector aspect={aspect} onChange={setAspect} lang={lang} />
 
             {/* Language Switcher */}
             <button
               onClick={toggleLang}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-stone-100 hover:bg-stone-200/70 border border-stone-200 text-stone-700 hover:text-stone-900 transition-all cursor-pointer"
+              className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-semibold bg-stone-100 hover:bg-stone-200/70 border border-stone-200 text-stone-700 hover:text-stone-900 transition-all cursor-pointer"
             >
-              <Globe className="w-3.5 h-3.5 text-amber-500" />
+              <Globe className="w-3.5 h-3.5 text-amber-500 shrink-0" />
               <span>{lang === "bn" ? "EN" : "বাং"}</span>
             </button>
           </div>
         </div>
       </header>
 
-      {/* Main Studio 2-Column Split Workspace */}
-      <div className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      {/* Main Studio 2-Column Split Workspace (Mobile: Canvas first, Controls below) */}
+      <div className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
         {/* ----------------------------------------------------------------- */}
-        {/* LEFT COLUMN: CONTROLS & WORKFLOW ACCORDION (5 COLS)               */}
+        {/* CONTROLS COLUMN (Mobile: order-2, Desktop: order-1, 5 COLS)        */}
         {/* ----------------------------------------------------------------- */}
-        <div className="lg:col-span-5 space-y-4">
+        <div className="lg:col-span-5 order-2 lg:order-1 space-y-4 w-full">
           {/* Navigation Tab Bar */}
-          <div className="grid grid-cols-6 p-1 rounded-2xl bg-stone-100 border border-stone-200/80">
+          <div className="grid grid-cols-6 p-1 rounded-2xl bg-stone-100 border border-stone-200/80 gap-0.5 sm:gap-1">
             <button
               onClick={() => setActiveTab("upload")}
-              className={`py-2 px-1 text-[11px] font-bold rounded-xl flex flex-col items-center justify-center gap-1 transition-all cursor-pointer ${
+              className={`py-2 px-0.5 sm:px-1 text-[10px] sm:text-[11px] font-bold rounded-xl flex flex-col items-center justify-center gap-0.5 sm:gap-1 transition-all cursor-pointer ${
                 activeTab === "upload"
                   ? "bg-white text-stone-900 shadow-2xs"
                   : "text-stone-500 hover:text-stone-900 hover:bg-stone-200/50"
@@ -389,9 +389,9 @@ function StudioWorkspace() {
         </div>
 
         {/* ----------------------------------------------------------------- */}
-        {/* RIGHT COLUMN: INTERACTIVE CANVAS & EXPORT (7 COLS)                */}
+        {/* RIGHT COLUMN: INTERACTIVE CANVAS & EXPORT (Mobile: order-1, 7 COLS) */}
         {/* ----------------------------------------------------------------- */}
-        <div className="lg:col-span-7 flex justify-center">
+        <div className="lg:col-span-7 order-1 lg:order-2 flex justify-center w-full">
           <StudioCanvas
             productImage={activeProductImage}
             selectedPreset={selectedPreset}

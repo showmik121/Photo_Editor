@@ -82,7 +82,7 @@ export function StudioCanvas({
     setDragStart({ x: e.clientX - transform.offsetX, y: e.clientY - transform.offsetY });
   };
 
-  // Direct Drag interaction on Price Badge
+  // Direct Drag interaction on Price Badge (Mouse)
   const handlePriceMouseDown = (e: React.MouseEvent) => {
     e.stopPropagation(); // Avoid triggering product drag
     setIsDraggingPrice(true);
@@ -116,6 +116,58 @@ export function StudioCanvas({
   };
 
   const handleMouseUp = () => {
+    setIsDraggingProduct(false);
+    setIsDraggingPrice(false);
+  };
+
+  // Touch event handlers for mobile phone touchscreens
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      setIsDraggingProduct(true);
+      setDragStart({ x: touch.clientX - transform.offsetX, y: touch.clientY - transform.offsetY });
+    }
+  };
+
+  const handlePriceTouchStart = (e: React.TouchEvent) => {
+    e.stopPropagation();
+    if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      setIsDraggingPrice(true);
+      setPriceDragStart({
+        x: touch.clientX - (badges.priceOffsetX || 0),
+        y: touch.clientY - (badges.priceOffsetY || 0),
+      });
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (e.touches.length !== 1) return;
+    const touch = e.touches[0];
+
+    // 1. Moving Price Badge via touch
+    if (isDraggingPrice) {
+      const maxTopY = aspect === "9:16" ? -480 : -280;
+      const maxBottomY = aspect === "9:16" ? 160 : 120;
+      const newX = Math.round(Math.min(Math.max(touch.clientX - priceDragStart.x, -220), 220));
+      const newY = Math.round(Math.min(Math.max(touch.clientY - priceDragStart.y, maxTopY), maxBottomY));
+      onBadgesChange?.({
+        ...badges,
+        priceOffsetX: newX,
+        priceOffsetY: newY,
+        pricePreset: "custom",
+      });
+      return;
+    }
+
+    // 2. Moving Product Layer via touch
+    if (!isDraggingProduct) return;
+    const newX = Math.min(Math.max(touch.clientX - dragStart.x, -160), 160);
+    const newY = Math.min(Math.max(touch.clientY - dragStart.y, -160), 160);
+    onTransformChange({ ...transform, offsetX: Math.round(newX), offsetY: Math.round(newY) });
+  };
+
+  const handleTouchEnd = () => {
     setIsDraggingProduct(false);
     setIsDraggingPrice(false);
   };
@@ -324,10 +376,14 @@ export function StudioCanvas({
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchEnd}
         style={{
           aspectRatio: aspect === "1:1" ? "1 / 1" : "9 / 16",
         }}
-        className={`relative w-full rounded-3xl overflow-hidden border border-stone-200/90 shadow-xl shadow-stone-200/50 select-none cursor-move transition-all duration-300 ${
+        className={`relative w-full rounded-3xl overflow-hidden border border-stone-200/90 shadow-xl shadow-stone-200/50 select-none cursor-move touch-none transition-all duration-300 ${
           getSurfaceBackground()
         } ${isDraggingProduct ? "ring-2 ring-amber-400" : ""}`}
       >
@@ -778,8 +834,12 @@ export function StudioCanvas({
           >
             <div
               onMouseDown={handlePriceMouseDown}
+              onTouchStart={handlePriceTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              onTouchCancel={handleTouchEnd}
               title={lang === "bn" ? "প্রাইস বাটন ড্র্যাগ করে সরান (Drag to move)" : "Drag to move price badge"}
-              className={`group px-5 py-2 rounded-full cursor-grab active:cursor-grabbing flex items-center gap-2 select-none transition-all ${getPriceTagStyleClasses(
+              className={`group px-5 py-2 rounded-full cursor-grab active:cursor-grabbing touch-none flex items-center gap-2 select-none transition-all ${getPriceTagStyleClasses(
                 badges.priceStyle
               )} ${
                 isDraggingPrice

@@ -30,6 +30,7 @@ export function UploadDropzone({ onProductReady, lang }: UploadDropzoneProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const processImageUpload = async (
     rawImageDataUrl: string,
@@ -147,6 +148,20 @@ export function UploadDropzone({ onProductReady, lang }: UploadDropzoneProps) {
         ref={fileInputRef}
         type="file"
         accept="image/png, image/jpeg, image/webp"
+        className="hidden"
+        onChange={(e) => {
+          if (e.target.files && e.target.files[0]) {
+            handleFile(e.target.files[0]);
+          }
+        }}
+      />
+
+      {/* Hidden Mobile Camera Input */}
+      <input
+        ref={cameraInputRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
         className="hidden"
         onChange={(e) => {
           if (e.target.files && e.target.files[0]) {
@@ -287,9 +302,30 @@ export function UploadDropzone({ onProductReady, lang }: UploadDropzoneProps) {
               </div>
             </div>
 
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white hover:bg-stone-100 text-xs font-semibold text-stone-700 border border-stone-200 shadow-2xs transition-colors">
-              <Camera className="w-3.5 h-3.5 text-amber-500" />
-              <span>{lang === "bn" ? "মোবাইল ক্যামেরা বা গ্যালারি থেকে ছবি নিন" : "Camera or Photo Library"}</span>
+            <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  cameraInputRef.current?.click();
+                }}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-stone-950 font-bold text-xs shadow-2xs transition-colors cursor-pointer"
+              >
+                <Camera className="w-3.5 h-3.5 text-stone-950" />
+                <span>{lang === "bn" ? "ক্যামেরা দিয়ে তুলুন" : "Take Photo"}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  fileInputRef.current?.click();
+                }}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-stone-50 text-stone-800 font-semibold text-xs border border-stone-200 shadow-2xs transition-colors cursor-pointer"
+              >
+                <FileImage className="w-3.5 h-3.5 text-stone-600" />
+                <span>{lang === "bn" ? "গ্যালারি থেকে নিন" : "Browse Files"}</span>
+              </button>
             </div>
           </div>
         )}

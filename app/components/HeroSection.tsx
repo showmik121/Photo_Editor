@@ -110,9 +110,9 @@ export function HeroSection({ lang }: HeroSectionProps) {
             </span>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3.5">
+          <div className="flex md:grid md:grid-cols-6 gap-3 overflow-x-auto pb-3 sm:pb-0 snap-x no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
             {/* 1. Lemon / Citrus on Natural Wood */}
-            <div className="group rounded-2xl overflow-hidden bg-gradient-to-b from-[#FFFDF9] to-[#F5ECE1] border border-stone-200/90 p-3 shadow-2xs hover:shadow-md hover:-translate-y-1 transition-all flex flex-col items-center justify-between text-center aspect-[4/5]">
+            <div className="group rounded-2xl overflow-hidden bg-gradient-to-b from-[#FFFDF9] to-[#F5ECE1] border border-stone-200/90 p-3 shadow-2xs hover:shadow-md hover:-translate-y-1 transition-all flex flex-col items-center justify-between text-center aspect-[4/5] w-32 sm:w-auto shrink-0 snap-start">
               <div className="w-full flex justify-between items-center text-[10px] text-stone-400 font-mono">
                 <span>01</span>
                 <span className="text-amber-600">🍋 Fresh</span>
@@ -128,7 +128,7 @@ export function HeroSection({ lang }: HeroSectionProps) {
             </div>
 
             {/* 2. Dropper Serum on Stone */}
-            <div className="group rounded-2xl overflow-hidden bg-gradient-to-b from-[#F9F8F6] to-[#E9E4DC] border border-stone-200/90 p-3 shadow-2xs hover:shadow-md hover:-translate-y-1 transition-all flex flex-col items-center justify-between text-center aspect-[4/5]">
+            <div className="group rounded-2xl overflow-hidden bg-gradient-to-b from-[#F9F8F6] to-[#E9E4DC] border border-stone-200/90 p-3 shadow-2xs hover:shadow-md hover:-translate-y-1 transition-all flex flex-col items-center justify-between text-center aspect-[4/5] w-32 sm:w-auto shrink-0 snap-start">
               <div className="w-full flex justify-between items-center text-[10px] text-stone-400 font-mono">
                 <span>02</span>
                 <span className="text-amber-600">✨ Serum</span>
@@ -144,7 +144,7 @@ export function HeroSection({ lang }: HeroSectionProps) {
             </div>
 
             {/* 3. Green Bottle on Column with Monstera Foliage */}
-            <div className="group rounded-2xl overflow-hidden bg-gradient-to-b from-[#F2F7F4] to-[#DEEBE3] border border-stone-200/90 p-3 shadow-2xs hover:shadow-md hover:-translate-y-1 transition-all flex flex-col items-center justify-between text-center aspect-[4/5]">
+            <div className="group rounded-2xl overflow-hidden bg-gradient-to-b from-[#F2F7F4] to-[#DEEBE3] border border-stone-200/90 p-3 shadow-2xs hover:shadow-md hover:-translate-y-1 transition-all flex flex-col items-center justify-between text-center aspect-[4/5] w-32 sm:w-auto shrink-0 snap-start">
               <div className="w-full flex justify-between items-center text-[10px] text-stone-400 font-mono">
                 <span>03</span>
                 <span className="text-emerald-700">🌿 Organic</span>
@@ -160,7 +160,7 @@ export function HeroSection({ lang }: HeroSectionProps) {
             </div>
 
             {/* 4. Ocean Clear Water Block */}
-            <div className="group rounded-2xl overflow-hidden bg-gradient-to-b from-[#F0F8FF] to-[#D9ECFA] border border-stone-200/90 p-3 shadow-2xs hover:shadow-md hover:-translate-y-1 transition-all flex flex-col items-center justify-between text-center aspect-[4/5]">
+            <div className="group rounded-2xl overflow-hidden bg-gradient-to-b from-[#F0F8FF] to-[#D9ECFA] border border-stone-200/90 p-3 shadow-2xs hover:shadow-md hover:-translate-y-1 transition-all flex flex-col items-center justify-between text-center aspect-[4/5] w-32 sm:w-auto shrink-0 snap-start">
               <div className="w-full flex justify-between items-center text-[10px] text-stone-400 font-mono">
                 <span>04</span>
                 <span className="text-sky-600">🌊 Aqua</span>
@@ -176,7 +176,7 @@ export function HeroSection({ lang }: HeroSectionProps) {
             </div>
 
             {/* 5. Terracotta Desert Arch */}
-            <div className="group rounded-2xl overflow-hidden bg-gradient-to-b from-[#FFF5ED] to-[#EBD5C5] border border-stone-200/90 p-3 shadow-2xs hover:shadow-md hover:-translate-y-1 transition-all flex flex-col items-center justify-between text-center aspect-[4/5]">
+            <div className="group rounded-2xl overflow-hidden bg-gradient-to-b from-[#FFF5ED] to-[#EBD5C5] border border-stone-200/90 p-3 shadow-2xs hover:shadow-md hover:-translate-y-1 transition-all flex flex-col items-center justify-between text-center aspect-[4/5] w-32 sm:w-auto shrink-0 snap-start">
               <div className="w-full flex justify-between items-center text-[10px] text-stone-400 font-mono">
                 <span>05</span>
                 <span className="text-orange-700">🏜️ Dunes</span>
@@ -192,7 +192,7 @@ export function HeroSection({ lang }: HeroSectionProps) {
             </div>
 
             {/* 6. Luxury Silk Velvet Fabric */}
-            <div className="group rounded-2xl overflow-hidden bg-gradient-to-b from-[#FAF5FF] to-[#EBD9FA] border border-stone-200/90 p-3 shadow-2xs hover:shadow-md hover:-translate-y-1 transition-all flex flex-col items-center justify-between text-center aspect-[4/5]">
+            <div className="group rounded-2xl overflow-hidden bg-gradient-to-b from-[#FAF5FF] to-[#EBD9FA] border border-stone-200/90 p-3 shadow-2xs hover:shadow-md hover:-translate-y-1 transition-all flex flex-col items-center justify-between text-center aspect-[4/5] w-32 sm:w-auto shrink-0 snap-start">
               <div className="w-full flex justify-between items-center text-[10px] text-stone-400 font-mono">
                 <span>06</span>
                 <span className="text-purple-600">👑 Silk</span>
