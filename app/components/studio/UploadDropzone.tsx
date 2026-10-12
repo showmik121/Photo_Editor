@@ -76,13 +76,15 @@ export function UploadDropzone({ onProductReady, lang }: UploadDropzoneProps) {
     // Auto Remove Background is ON: Run pre-processing & AI removal
     try {
       setStatusMessage(
-        lang === "bn" ? "ছবি অপ্টিমাইজ ও প্রস্তুত করা হচ্ছে..." : "Pre-processing photo..."
+        lang === "bn" ? "ছবি প্রসেস হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন..." : "Processing photo, please wait..."
       );
       setProcessingProgress(25);
       const preprocessed = await preprocessImage(rawImageDataUrl, 1024);
       setPreviewThumbnail(preprocessed);
 
-      setStatusMessage(lang === "bn" ? "AI ব্যাকগ্রাউন্ড আলাদা করছে..." : "AI segmenting background...");
+      setStatusMessage(
+        lang === "bn" ? "ছবি প্রসেস হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন..." : "Processing photo, please wait..."
+      );
       setProcessingProgress(45);
 
       const cutoutDataUrl = await removeBackgroundAI(preprocessed, (msg, pct) => {
@@ -124,7 +126,7 @@ export function UploadDropzone({ onProductReady, lang }: UploadDropzoneProps) {
     setErrorMessage(null);
     setProcessingProgress(15);
     setStatusMessage(
-      lang === "bn" ? "ছবি অপ্টিমাইজ ও প্রস্তুত করা হচ্ছে..." : "Pre-processing photo..."
+      lang === "bn" ? "ছবি প্রসেস হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন..." : "Processing photo, please wait..."
     );
 
     try {
@@ -140,7 +142,7 @@ export function UploadDropzone({ onProductReady, lang }: UploadDropzoneProps) {
 
       // 2. Background removal with visible loading spinner and clear progress
       setStatusMessage(
-        lang === "bn" ? "AI ব্যাকগ্রাউন্ড আলাদা করছে..." : "AI segmenting background..."
+        lang === "bn" ? "ছবি প্রসেস হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন..." : "Processing photo, please wait..."
       );
       setProcessingProgress(35);
 
@@ -307,8 +309,8 @@ export function UploadDropzone({ onProductReady, lang }: UploadDropzoneProps) {
                 <span>
                   {statusMessage ||
                     (lang === "bn"
-                      ? "AI ব্যাকগ্রাউন্ড প্রসেস করছে..."
-                      : "AI processing background...")}
+                      ? "ছবি প্রসেস হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন..."
+                      : "Processing photo, please wait...")}
                 </span>
               </div>
               <div className="text-xs font-mono text-amber-600 font-bold">

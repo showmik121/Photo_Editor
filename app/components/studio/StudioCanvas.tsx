@@ -742,14 +742,14 @@ export function StudioCanvas({
         {/* 9. ISOLATED PRODUCT LAYER (DRAGGABLE & SCALABLE)                  */}
         {/* ================================================================= */}
         <div
-          className="absolute inset-0 flex items-center justify-center p-6 z-20 pointer-events-none"
+          className="absolute inset-0 flex items-center justify-center p-4 sm:p-6 z-20 pointer-events-none"
           style={{
             transform: `translate(${transform.offsetX}px, ${transform.offsetY}px)`,
           }}
         >
           {productImage ? (
             <div
-              className="relative transition-transform duration-75"
+              className="relative max-h-full max-w-full flex items-center justify-center transition-transform duration-75"
               style={{
                 transform: `scale(${transform.scale}) ${transform.flipped ? "scaleX(-1)" : ""}`,
               }}
@@ -762,7 +762,7 @@ export function StudioCanvas({
                     ? `brightness(${enhance.brightness}) contrast(${enhance.contrast}) saturate(${enhance.saturation}) drop-shadow(0 15px 25px rgba(0,0,0,0.45))`
                     : "drop-shadow(0 15px 25px rgba(0,0,0,0.45))",
                 }}
-                className="max-h-[380px] sm:max-h-[440px] w-auto object-contain transition-all"
+                className="max-h-[300px] sm:max-h-[420px] max-w-[85%] sm:max-w-[88%] w-auto h-auto object-contain transition-all select-none"
                 draggable={false}
               />
             </div>

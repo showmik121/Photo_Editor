@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const maxDuration = 60; // 60 seconds timeout for AI generation
 
-// Reusable cached client instances across requests
+// Reusable cached client instances across requests for Hugging Face
 let cachedRmbg14Client: any = null;
 let cachedRmbg20Client: any = null;
 
@@ -65,90 +65,158 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const token =
-      process.env.HF_TOKEN ||
-      process.env.HUGGINGFACE_API_KEY ||
-      "";
+    const base64DataUrl = `data:${mimeType};base64,${imageBuffer.toString("base64")}`;
 
-    const imageBlob = new Blob([new Uint8Array(imageBuffer)], { type: mimeType });
+    // =========================================================================
+    // 1. PRIMARY PRODUCTION ENGINE: fal.ai 'bria/rmbg-2.0'
+    // Endpoint: fal-ai/bria/background/remove
+    // =========================================================================
+    const falKey = process.env.FAL_KEY || process.env.FAL_API_KEY || "";
+    if (falKey) {
+      try {
+        const falRes = await fetch("https://fal.run/fal-ai/bria/background/remove", {
+          method: "POST",
+          headers: {
+            Authorization: `Key ${falKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            image_url: base64DataUrl,
+          }),
+        });
 
-    // 1. Primary Engine: Hugging Face BRIA RMBG-1.4 (Unlimited, No ZeroGPU Quota Limit, Fast ~4s)
-    try {
-      const client = await getRmbg14Client(token);
-      const result: any = await client.predict("/run", {
-        image: imageBlob,
-      });
-
-      if (result && result.data && Array.isArray(result.data)) {
-        // Output format: [ [preview1, preview2], { path, url, orig_name: 'no_bg_image.png' } ]
-        const cutoutFile = result.data[1] || result.data[0];
-        const fileUrl = cutoutFile?.url || (Array.isArray(cutoutFile) ? cutoutFile[0]?.url : null);
-
-        if (fileUrl) {
-          const cutRes = await fetch(fileUrl, {
-            headers: token ? { Authorization: `Bearer ${token}` } : {},
-          });
-
-          if (cutRes.ok) {
-            const cutBuf = Buffer.from(await cutRes.arrayBuffer());
-            const dataUrl = `data:image/png;base64,${cutBuf.toString("base64")}`;
-            return NextResponse.json({
-              success: true,
-              source: "huggingface-rmbg-1.4",
-              cutout: dataUrl,
-            });
+        if (falRes.ok) {
+          const falData = await falRes.json();
+          const cutoutUrl = falData?.image?.url;
+          if (cutoutUrl) {
+            const cutRes = await fetch(cutoutUrl);
+            if (cutRes.ok) {
+              const cutBuf = Buffer.from(await cutRes.arrayBuffer());
+              const dataUrl = `data:image/png;base64,${cutBuf.toString("base64")}`;
+              return NextResponse.json({
+                success: true,
+                source: "fal-bria-rmbg-2.0",
+                cutout: dataUrl,
+              });
+            }
           }
+        } else {
+          console.warn("fal.ai responded with HTTP status", falRes.status);
         }
+      } catch (falErr: any) {
+        console.warn("fal.ai bria/rmbg-2.0 error, trying backup engines:", falErr?.message || falErr);
       }
-    } catch (rmbg14Err: any) {
-      console.warn("RMBG-1.4 error, trying RMBG-2.0:", rmbg14Err?.message || rmbg14Err);
-      cachedRmbg14Client = null; // reset cache on failure
     }
 
-    // 2. Secondary Engine: Hugging Face BRIA RMBG-2.0
-    try {
-      const client2 = await getRmbg20Client(token);
-      const result2: any = await client2.predict("/image", {
-        image: imageBlob,
-      });
-
-      if (result2 && result2.data && Array.isArray(result2.data)) {
-        const cutoutFile = result2.data[1] || result2.data[0];
-        const fileUrl = cutoutFile?.url || (Array.isArray(cutoutFile) ? cutoutFile[0]?.url : null);
-
-        if (fileUrl) {
-          const cutRes = await fetch(fileUrl, {
-            headers: token ? { Authorization: `Bearer ${token}` } : {},
+    // =========================================================================
+    // 2. SECONDARY ENGINE: rembg microservice (if REMBG_URL is configured)
+    // =========================================================================
+    const rembgUrl = process.env.REMBG_URL || "";
+    if (rembgUrl) {
+      try {
+        const form = new FormData();
+        form.append("file", new Blob([new Uint8Array(imageBuffer)], { type: mimeType }), "input.png");
+        const remRes = await fetch(rembgUrl, { method: "POST", body: form });
+        if (remRes.ok) {
+          const remBuf = Buffer.from(await remRes.arrayBuffer());
+          return NextResponse.json({
+            success: true,
+            source: "rembg-service",
+            cutout: `data:image/png;base64,${remBuf.toString("base64")}`,
           });
-
-          if (cutRes.ok) {
-            const cutBuf = Buffer.from(await cutRes.arrayBuffer());
-            const dataUrl = `data:image/png;base64,${cutBuf.toString("base64")}`;
-            return NextResponse.json({
-              success: true,
-              source: "huggingface-rmbg-2.0",
-              cutout: dataUrl,
-            });
-          }
         }
+      } catch (remErr: any) {
+        console.warn("rembg service error:", remErr?.message || remErr);
       }
-    } catch (rmbg20Err: any) {
-      console.warn("RMBG-2.0 error:", rmbg20Err?.message || rmbg20Err);
-      cachedRmbg20Client = null; // reset cache on failure
     }
 
-    // 3. Fallback indication: instruct client to use instant canvas segmentation
+    // =========================================================================
+    // 3. TERTIARY ENGINE: Hugging Face BRIA RMBG-2.0 & RMBG-1.4 (with HF_TOKEN)
+    // =========================================================================
+    const hfToken = process.env.HF_TOKEN || process.env.HUGGINGFACE_API_KEY || "";
+    if (hfToken) {
+      const imageBlob = new Blob([new Uint8Array(imageBuffer)], { type: mimeType });
+
+      // 3A. Hugging Face BRIA RMBG-2.0
+      try {
+        const client2 = await getRmbg20Client(hfToken);
+        const result2: any = await client2.predict("/image", {
+          image: imageBlob,
+        });
+
+        if (result2 && result2.data && Array.isArray(result2.data)) {
+          const cutoutFile = result2.data[1] || result2.data[0];
+          const fileUrl = cutoutFile?.url || (Array.isArray(cutoutFile) ? cutoutFile[0]?.url : null);
+
+          if (fileUrl) {
+            const cutRes = await fetch(fileUrl, {
+              headers: { Authorization: `Bearer ${hfToken}` },
+            });
+
+            if (cutRes.ok) {
+              const cutBuf = Buffer.from(await cutRes.arrayBuffer());
+              const dataUrl = `data:image/png;base64,${cutBuf.toString("base64")}`;
+              return NextResponse.json({
+                success: true,
+                source: "huggingface-rmbg-2.0",
+                cutout: dataUrl,
+              });
+            }
+          }
+        }
+      } catch (rmbg20Err: any) {
+        console.warn("RMBG-2.0 error, trying RMBG-1.4:", rmbg20Err?.message || rmbg20Err);
+        cachedRmbg20Client = null;
+      }
+
+      // 3B. Hugging Face BRIA RMBG-1.4
+      try {
+        const client1 = await getRmbg14Client(hfToken);
+        const result1: any = await client1.predict("/run", {
+          image: imageBlob,
+        });
+
+        if (result1 && result1.data && Array.isArray(result1.data)) {
+          const cutoutFile = result1.data[1] || result1.data[0];
+          const fileUrl = cutoutFile?.url || (Array.isArray(cutoutFile) ? cutoutFile[0]?.url : null);
+
+          if (fileUrl) {
+            const cutRes = await fetch(fileUrl, {
+              headers: { Authorization: `Bearer ${hfToken}` },
+            });
+
+            if (cutRes.ok) {
+              const cutBuf = Buffer.from(await cutRes.arrayBuffer());
+              const dataUrl = `data:image/png;base64,${cutBuf.toString("base64")}`;
+              return NextResponse.json({
+                success: true,
+                source: "huggingface-rmbg-1.4",
+                cutout: dataUrl,
+              });
+            }
+          }
+        }
+      } catch (rmbg14Err: any) {
+        console.warn("RMBG-1.4 error:", rmbg14Err?.message || rmbg14Err);
+        cachedRmbg14Client = null;
+      }
+    }
+
+    // =========================================================================
+    // 4. FALLBACK TO CLIENT-SIDE WASM:
+    // If no server keys are configured or all cloud endpoints failed
+    // =========================================================================
     return NextResponse.json({
       success: false,
-      fallbackToLocal: true,
-      message: "ক্লাউড এআই এই মুহূর্তে ব্যস্ত, ইনস্ট্যান্ট ক্যানভাস ইঞ্জিন দিয়ে রিমুভ করা হচ্ছে।",
+      fallbackToClient: true,
+      message: "Server background removal unavailable or unconfigured, falling back to client-side engine.",
     });
   } catch (error: any) {
     console.error("API /api/remove-bg unexpected error:", error);
     return NextResponse.json(
       {
         success: false,
-        fallbackToLocal: true,
+        fallbackToClient: true,
         error: error?.message || "Internal server error",
       },
       { status: 500 }

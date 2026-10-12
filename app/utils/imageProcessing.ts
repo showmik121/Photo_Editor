@@ -1,8 +1,8 @@
 /**
  * Image processing utilities for Chobi Studio
- * Handles file validation, HTML5 canvas pre-processing (downscale/compression to max 1024px),
- * client-side WebAssembly background removal with mobile memory safeguards,
- * automatic fallback to server API endpoint (/api/remove-bg), and instant canvas segmentation fallback.
+ * Handles file validation, HTML5 canvas pre-compression (downscale to max 1024px),
+ * Production server background removal pipeline (/api/remove-bg: fal.ai bria/rmbg-2.0, rembg, Hugging Face RMBG-2.0),
+ * and client-side @imgly/background-removal fallback on downscaled images (<= 800px).
  */
 
 export interface ValidationResult {
@@ -40,18 +40,18 @@ export interface CutoutProgressStep {
 }
 
 export const CUTOUT_STEPS: CutoutProgressStep[] = [
-  { textBn: "ছবি আপলোড ও স্ক্যান হচ্ছে...", textEn: "Scanning photo composition...", percent: 20 },
-  { textBn: "AI ব্যাকগ্রাউন্ড ডিটেক্ট করছে...", textEn: "Detecting background boundaries...", percent: 50 },
-  { textBn: "প্রোডাক্টের এজ ও টেক্সচার আলাদা হচ্ছে...", textEn: "Segmenting fine fabric & product edges...", percent: 75 },
-  { textBn: "3D কন্টাক্ট শ্যাডো ও লাইটিং তৈরি হচ্ছে...", textEn: "Synthesizing realistic 3D contact shadows...", percent: 92 },
+  { textBn: "ছবি প্রসেস হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...", textEn: "Processing photo, please wait...", percent: 20 },
+  { textBn: "ছবি প্রসেস হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...", textEn: "Processing photo, please wait...", percent: 50 },
+  { textBn: "ছবি প্রসেস হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...", textEn: "Processing photo, please wait...", percent: 75 },
+  { textBn: "ছবি প্রসেস হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...", textEn: "Processing photo, please wait...", percent: 90 },
   { textBn: "স্টুডিও ব্যানার প্রস্তুত!", textEn: "Studio composite ready!", percent: 100 },
 ];
 
 /**
- * 1. Image Pre-processing:
- * Automatically downscale and compress image to a maximum dimension of 1024px
- * using an in-memory HTML5 canvas before passing to the background removal engine.
- * Prevents mobile browser freezing, WebAssembly OOM errors, and tab crashes.
+ * 1. Client-Side Image Pre-compression (Crucial for Mobile):
+ * Automatically downscale and compress uploaded images to a maximum dimension
+ * of 1024px using an in-memory HTML5 Canvas before any processing.
+ * Prevents mobile memory crashes and fixes edge-detection failures.
  */
 export async function preprocessImage(
   source: File | Blob | string,
@@ -79,7 +79,7 @@ export async function preprocessImage(
       img.crossOrigin = "anonymous";
     }
 
-    // Safety timeout: 4 seconds maximum so processing never hangs
+    // Safety timeout: 4 seconds maximum so decoding never freezes
     const timeoutId = setTimeout(() => {
       if (objectUrl) URL.revokeObjectURL(objectUrl);
       if (typeof source === "string") {
@@ -101,7 +101,7 @@ export async function preprocessImage(
           return;
         }
 
-        // Downscale preserving aspect ratio to maximum 1024px
+        // Downscale preserving aspect ratio to maximum dimension (e.g. 1024px or 800px)
         if (width > maxDimension || height > maxDimension) {
           if (width > height) {
             height = Math.round((height * maxDimension) / width);
@@ -128,7 +128,7 @@ export async function preprocessImage(
         ctx.imageSmoothingQuality = "high";
         ctx.drawImage(img, 0, 0, width, height);
 
-        // Format determination: preserve transparent PNG if applicable, otherwise JPEG 0.88 for compact RAM usage
+        // Format determination: preserve transparent PNG if applicable, otherwise compact JPEG
         const isPng =
           (typeof source === "string" && source.startsWith("data:image/png")) ||
           (typeof source === "object" && source !== null && "type" in source && (source as File).type === "image/png");
@@ -170,58 +170,12 @@ export async function preprocessImage(
   });
 }
 
-// Backwards-compatible alias for existing imports
+// Backwards-compatible alias
 export const downscaleImageIfNeeded = preprocessImage;
 
 /**
- * Client-Side WebAssembly Background Removal attempt with mobile RAM safeguards
- */
-async function tryClientWasmRemoval(
-  imageSource: string,
-  onProgress?: (message: string, percent: number) => void
-): Promise<string> {
-  if (typeof window === "undefined" || typeof WebAssembly === "undefined") {
-    throw new Error("WebAssembly is not available on this platform");
-  }
-
-  // Check for device memory if reported by browser (e.g. mobile < 2GB RAM)
-  const nav = navigator as any;
-  if (nav.deviceMemory && nav.deviceMemory < 2) {
-    throw new Error("Mobile device RAM is too low (< 2GB) for client-side WebAssembly inference");
-  }
-
-  // 8-second safety timeout: if model loading or inference takes too long on mobile, abort immediately
-  const timeoutPromise = new Promise<never>((_, reject) =>
-    setTimeout(
-      () => reject(new Error("Client-side WebAssembly timeout (8s limit reached)")),
-      8000
-    )
-  );
-
-  const wasmTask = (async () => {
-    const { removeBackground } = await import("@imgly/background-removal");
-    const blob = await removeBackground(imageSource, {
-      progress: (_key: string, current: number, total: number) => {
-        if (total > 0) {
-          const pct = Math.min(60, Math.round(25 + (current / total) * 35));
-          onProgress?.("ডিভাইসে AI ব্যাকগ্রাউন্ড পৃথক করছে...", pct);
-        }
-      },
-    });
-
-    return new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(blob);
-    });
-  })();
-
-  return Promise.race([wasmTask, timeoutPromise]);
-}
-
-/**
- * Server API Endpoint (/api/remove-bg) caller with timeout
+ * Production Server API Endpoint (/api/remove-bg) Caller:
+ * Calls server endpoint which uses fal.ai bria/rmbg-2.0, rembg, or Hugging Face RMBG-2.0
  */
 async function callServerRemoveBg(base64Image: string): Promise<string | null> {
   const controller = new AbortController();
@@ -252,70 +206,109 @@ async function callServerRemoveBg(base64Image: string): Promise<string | null> {
 }
 
 /**
- * 2. Robust Background Removal Pipeline with Fallback & Memory Safety:
- * - Pre-processes image down to max 1024px using HTML5 canvas
- * - Attempts client-side Wasm processing with strict mobile RAM/timeout safeguards
- * - If client-side fails (due to mobile WebAssembly/RAM limits), automatically falls back to /api/remove-bg
- * - If server API is unavailable, falls back to lightweight in-memory canvas segmentation
- * - If all fail, throws clear user-facing error message: "প্রসেসিংয়ে সমস্যা হয়েছে, অনুগ্রহ করে ছোট সাইজের ছবি দিন"
+ * Client-Side @imgly/background-removal Fallback:
+ * ONLY executed on downscaled images (<= 800px) when running purely client-side without API key
+ */
+async function runImglyBackgroundRemoval(
+  imageSource: string,
+  onProgress?: (message: string, percent: number) => void
+): Promise<string> {
+  if (typeof window === "undefined" || typeof WebAssembly === "undefined") {
+    throw new Error("WebAssembly is not supported in this environment");
+  }
+
+  // 12-second safety timeout to avoid mobile freeze
+  const timeoutPromise = new Promise<never>((_, reject) =>
+    setTimeout(
+      () => reject(new Error("@imgly/background-removal timeout (12s limit reached)")),
+      12000
+    )
+  );
+
+  const wasmTask = (async () => {
+    const { removeBackground } = await import("@imgly/background-removal");
+    const blob = await removeBackground(imageSource, {
+      progress: (_key: string, current: number, total: number) => {
+        if (total > 0) {
+          const pct = Math.min(85, Math.round(60 + (current / total) * 25));
+          onProgress?.("ছবি প্রসেস হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...", pct);
+        }
+      },
+    });
+
+    return new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  })();
+
+  return Promise.race([wasmTask, timeoutPromise]);
+}
+
+/**
+ * 2. Hybrid Production Background Removal Pipeline:
+ * - Step 1: Pre-compress image to max 1024px using HTML5 Canvas (Crucial for mobile memory)
+ * - Step 2: Dedicated Server Endpoint (/api/remove-bg) using fal.ai 'bria/rmbg-2.0', rembg, or Hugging Face
+ * - Step 3: Fallback purely client-side: uses '@imgly/background-removal' ONLY on downscaled images (<= 800px) inside try/catch
+ * - Step 4: Instant Canvas color thresholding segmentation fallback
  */
 export async function removeBackgroundAI(
   imageSource: string | File | Blob,
   onProgress?: (message: string, percent: number) => void
 ): Promise<string> {
-  // Step 1: In-memory HTML5 Canvas pre-processing (downscale & compress to max 1024px)
-  onProgress?.("ছবি অপ্টিমাইজ ও কম্প্রেস করা হচ্ছে (Max 1024px)...", 15);
-  const preprocessedImage = await preprocessImage(imageSource, 1024);
+  // Step 1: Client-Side Pre-compression to max 1024px
+  onProgress?.("ছবি প্রসেস হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...", 20);
+  const preprocessed1024 = await preprocessImage(imageSource, 1024);
 
   let cutoutResult: string | null = null;
 
-  // Step 2: Attempt client-side processing (WebAssembly / ONNX engine)
+  // Step 2: Dedicated Server Endpoint (/api/remove-bg) - fal.ai bria/rmbg-2.0 / rembg / HF
   try {
-    onProgress?.("ডিভাইসের AI ইঞ্জিন যাচাই করা হচ্ছে...", 30);
-    cutoutResult = await tryClientWasmRemoval(preprocessedImage, onProgress);
+    onProgress?.("ছবি প্রসেস হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...", 45);
+    cutoutResult = await callServerRemoveBg(preprocessed1024);
     if (cutoutResult) {
-      onProgress?.("স্টুডিও কাটআউট প্রস্তুত!", 100);
-      return cutoutResult;
-    }
-  } catch (clientWasmErr: any) {
-    console.warn(
-      "Client-side processing failed or limited by mobile WebAssembly/RAM. Automatically falling back to /api/remove-bg:",
-      clientWasmErr?.message || clientWasmErr
-    );
-  }
-
-  // Step 3: Automatic fallback to server API endpoint (/api/remove-bg)
-  try {
-    onProgress?.("সার্ভার AI এপিআই দিয়ে ব্যাকগ্রাউন্ড কাটা হচ্ছে...", 60);
-    cutoutResult = await callServerRemoveBg(preprocessedImage);
-    if (cutoutResult) {
-      onProgress?.("প্রিমিয়াম স্টুডিও কাটআউট প্রস্তুত!", 100);
+      onProgress?.("ছবি প্রসেস হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...", 100);
       return cutoutResult;
     }
   } catch (serverErr: any) {
-    console.warn("Server API (/api/remove-bg) fallback failed or timed out:", serverErr?.message || serverErr);
+    console.warn("Server API (/api/remove-bg) fallback, will try client-side fallback:", serverErr?.message || serverErr);
   }
 
-  // Step 4: Ultra-fast local canvas segmentation fallback (15ms, zero RAM freeze)
+  // Step 3: Purely Client-Side Fallback:
+  // Use '@imgly/background-removal' ONLY on downscaled images (<= 800px) inside try/catch
   try {
-    onProgress?.("ক্যানভাস কালার সেগমেন্টেশন প্রয়োগ করা হচ্ছে...", 85);
-    cutoutResult = await removeBackgroundClientSide(preprocessedImage);
-    if (cutoutResult && cutoutResult !== preprocessedImage) {
-      onProgress?.("কাটআউট সম্পন্ন!", 100);
+    onProgress?.("ছবি প্রসেস হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...", 65);
+    const downscaled800 = await preprocessImage(preprocessed1024, 800);
+    cutoutResult = await runImglyBackgroundRemoval(downscaled800, onProgress);
+    if (cutoutResult) {
+      onProgress?.("ছবি প্রসেস হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...", 100);
+      return cutoutResult;
+    }
+  } catch (wasmErr: any) {
+    console.warn("@imgly/background-removal fallback failed or timed out:", wasmErr?.message || wasmErr);
+  }
+
+  // Step 4: Instant local canvas segmentation fallback (15ms, zero RAM crash)
+  try {
+    onProgress?.("ছবি প্রসেস হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...", 85);
+    cutoutResult = await removeBackgroundClientSide(preprocessed1024);
+    if (cutoutResult && cutoutResult !== preprocessed1024) {
+      onProgress?.("ছবি প্রসেস হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...", 100);
       return cutoutResult;
     }
   } catch (canvasErr) {
     console.warn("Local canvas segmentation fallback failed:", canvasErr);
   }
 
-  // Step 5: If all engines failed, throw clear error
+  // If all attempts failed, throw clear error
   throw new Error("প্রসেসিংয়ে সমস্যা হয়েছে, অনুগ্রহ করে ছোট সাইজের ছবি দিন");
 }
 
 /**
- * Ultra-fast, lightweight canvas-based background segmentation fallback:
- * Analyzes corner pixel colors and performs alpha thresholding with squared distance
- * Optimized for mobile devices to prevent thread blocking (runs in ~15ms).
+ * Ultra-fast local canvas-based background segmentation fallback:
+ * Analyzes corner pixel colors and performs alpha thresholding with squared distance.
  */
 export async function removeBackgroundClientSide(
   imageSource: string | HTMLImageElement
@@ -330,7 +323,7 @@ export async function removeBackgroundClientSide(
     img.onload = () => {
       try {
         const canvas = document.createElement("canvas");
-        const maxDim = 1024;
+        const maxDim = 800; // Capped at 800px for speed & zero RAM lag
         let w = img.width;
         let h = img.height;
 

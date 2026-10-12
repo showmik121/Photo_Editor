@@ -179,8 +179,8 @@ function StudioWorkspace() {
 
     setIsRemovingBg(true);
     toast(
-      lang === "bn" ? "AI ব্যাকগ্রাউন্ড প্রসেসিং শুরু হয়েছে..." : "AI Background Removal Started...",
-      lang === "bn" ? "মডেল দিয়ে ব্যাকগ্রাউন্ড আলাদা করা হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন।" : "Segmenting edges, please wait...",
+      lang === "bn" ? "ছবি প্রসেস হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন..." : "Processing photo, please wait...",
+      lang === "bn" ? "AI মডেল দিয়ে নিখুঁত কাটআউট তৈরি হচ্ছে..." : "Segmenting edges, please wait...",
       "info"
     );
 
