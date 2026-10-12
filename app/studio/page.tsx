@@ -32,7 +32,7 @@ import { ProductControls, ProductTransformState } from "../components/studio/Pro
 import { PhotoEnhanceControls, PhotoEnhanceState } from "../components/studio/PhotoEnhanceControls";
 import { StudioCanvas } from "../components/studio/StudioCanvas";
 import { ToastProvider, useToast } from "../components/Toast";
-import { removeBackgroundAI } from "../utils/imageProcessing";
+import { removeBackgroundAI, preprocessImage } from "../utils/imageProcessing";
 
 type ActiveTab = "upload" | "presets" | "card" | "enhance" | "badges" | "transform";
 
@@ -185,7 +185,8 @@ function StudioWorkspace() {
     );
 
     try {
-      const cutoutResult = await removeBackgroundAI(sourceToCut, (msg) => {
+      const optimizedSource = await preprocessImage(sourceToCut, 1024);
+      const cutoutResult = await removeBackgroundAI(optimizedSource, (msg) => {
         console.log("BG removal progress:", msg);
       });
 
@@ -200,7 +201,7 @@ function StudioWorkspace() {
     } catch (err: any) {
       console.error("Cutout error:", err);
       toast(
-        lang === "bn" ? "ব্যাকগ্রাউন্ড কাটতে সমস্যা হয়েছে" : "Background Removal Failed",
+        lang === "bn" ? "প্রসেসিংয়ে সমস্যা হয়েছে, অনুগ্রহ করে ছোট সাইজের ছবি দিন" : "Processing failed, please upload a smaller image file.",
         lang === "bn" ? "দয়া করে আবার চেষ্টা করুন।" : "Please try again.",
         "error"
       );

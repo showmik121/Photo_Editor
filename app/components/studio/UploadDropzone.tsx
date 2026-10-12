@@ -13,7 +13,12 @@ import {
 } from "lucide-react";
 import { Language } from "../../data/locales";
 import { SAMPLE_PRODUCTS, SampleProduct, svgToDataUrl } from "../../data/sampleProducts";
-import { validateImageFile, CUTOUT_STEPS, removeBackgroundAI } from "../../utils/imageProcessing";
+import {
+  validateImageFile,
+  CUTOUT_STEPS,
+  removeBackgroundAI,
+  preprocessImage,
+} from "../../utils/imageProcessing";
 
 interface UploadDropzoneProps {
   onProductReady: (dataUrl: string, sampleInfo?: SampleProduct, rawOriginal?: string) => void;
@@ -61,20 +66,26 @@ export function UploadDropzone({ onProductReady, lang }: UploadDropzoneProps) {
       return;
     }
 
-    // If user uploaded a real image
+    // If user opted to keep original background
     if (!autoRemoveBg) {
-      // User opted to keep original background
       setIsProcessing(false);
       onProductReady(rawImageDataUrl, undefined, rawImageDataUrl);
       return;
     }
 
-    // Auto Remove Background is ON: Run AI background removal
+    // Auto Remove Background is ON: Run pre-processing & AI removal
     try {
+      setStatusMessage(
+        lang === "bn" ? "ছবি অপ্টিমাইজ ও প্রস্তুত করা হচ্ছে..." : "Pre-processing photo..."
+      );
+      setProcessingProgress(25);
+      const preprocessed = await preprocessImage(rawImageDataUrl, 1024);
+      setPreviewThumbnail(preprocessed);
+
       setStatusMessage(lang === "bn" ? "AI ব্যাকগ্রাউন্ড আলাদা করছে..." : "AI segmenting background...");
       setProcessingProgress(45);
 
-      const cutoutDataUrl = await removeBackgroundAI(rawImageDataUrl, (msg, pct) => {
+      const cutoutDataUrl = await removeBackgroundAI(preprocessed, (msg, pct) => {
         setStatusMessage(msg);
         setProcessingProgress(pct);
       });
@@ -84,39 +95,85 @@ export function UploadDropzone({ onProductReady, lang }: UploadDropzoneProps) {
 
       setTimeout(() => {
         setIsProcessing(false);
-        onProductReady(cutoutDataUrl, undefined, rawImageDataUrl);
+        onProductReady(cutoutDataUrl, undefined, preprocessed);
       }, 250);
     } catch (err: any) {
       console.warn("Background removal error:", err);
       setIsProcessing(false);
-      setErrorMessage(
+      const errorMsg =
         lang === "bn"
-          ? "ব্যাকগ্রাউন্ড কাটতে সমস্যা হয়েছে, তবে আসল ছবিটি যুক্ত করা হয়েছে।"
-          : "Cutout failed, loaded original photo instead."
-      );
+          ? "প্রসেসিংয়ে সমস্যা হয়েছে, অনুগ্রহ করে ছোট সাইজের ছবি দিন"
+          : "Processing failed, please upload a smaller image file.";
+      setErrorMessage(errorMsg);
       onProductReady(rawImageDataUrl, undefined, rawImageDataUrl);
     } finally {
       setTimeout(() => {
         setIsProcessing(false);
-      }, 500);
+      }, 350);
     }
   };
 
-  const handleFile = (file: File) => {
+  const handleFile = async (file: File) => {
     const val = validateImageFile(file);
     if (!val.valid) {
       setErrorMessage(lang === "bn" ? val.errorBn! : val.errorEn!);
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const result = e.target?.result as string;
-      if (result) {
-        processImageUpload(result);
+    setIsProcessing(true);
+    setErrorMessage(null);
+    setProcessingProgress(15);
+    setStatusMessage(
+      lang === "bn" ? "ছবি অপ্টিমাইজ ও প্রস্তুত করা হচ্ছে..." : "Pre-processing photo..."
+    );
+
+    try {
+      // 1. Image Pre-processing: Automatically downscale/compress to max 1024px using HTML5 canvas
+      const preprocessedDataUrl = await preprocessImage(file, 1024);
+      setPreviewThumbnail(preprocessedDataUrl);
+
+      if (!autoRemoveBg) {
+        setIsProcessing(false);
+        onProductReady(preprocessedDataUrl, undefined, preprocessedDataUrl);
+        return;
       }
-    };
-    reader.readAsDataURL(file);
+
+      // 2. Background removal with visible loading spinner and clear progress
+      setStatusMessage(
+        lang === "bn" ? "AI ব্যাকগ্রাউন্ড আলাদা করছে..." : "AI segmenting background..."
+      );
+      setProcessingProgress(35);
+
+      const cutoutDataUrl = await removeBackgroundAI(preprocessedDataUrl, (msg, pct) => {
+        setStatusMessage(msg);
+        setProcessingProgress(pct);
+      });
+
+      setProcessingProgress(100);
+      setStatusMessage(lang === "bn" ? "কাটআউট সম্পন্ন!" : "Cutout complete!");
+
+      setTimeout(() => {
+        setIsProcessing(false);
+        onProductReady(cutoutDataUrl, undefined, preprocessedDataUrl);
+      }, 250);
+    } catch (err: any) {
+      console.error("Background removal processing error:", err);
+      setIsProcessing(false);
+      const errorMsg =
+        lang === "bn"
+          ? "প্রসেসিংয়ে সমস্যা হয়েছে, অনুগ্রহ করে ছোট সাইজের ছবি দিন"
+          : "Processing failed, please upload a smaller image file.";
+      setErrorMessage(errorMsg);
+
+      // Safe fallback without breaking the UI: keep original photo accessible
+      if (previewThumbnail) {
+        onProductReady(previewThumbnail, undefined, previewThumbnail);
+      }
+    } finally {
+      setTimeout(() => {
+        setIsProcessing(false);
+      }, 350);
+    }
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -246,7 +303,7 @@ export function UploadDropzone({ onProductReady, lang }: UploadDropzoneProps) {
 
             <div className="space-y-1.5">
               <div className="text-sm font-bold text-stone-900 flex items-center justify-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
+                <RefreshCw className="w-4 h-4 text-amber-500 animate-spin shrink-0" />
                 <span>
                   {statusMessage ||
                     (lang === "bn"
