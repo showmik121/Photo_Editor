@@ -8,7 +8,10 @@ export type SurfaceType =
   | "clean-white"    // E-commerce white catalog
   | "concrete-grey"  // Commercial Minimalist: Neutral Grey Concrete (ILYN / Sailor / Apex)
   | "warm-plaster"   // Commercial Minimalist: Soft Warm Plaster (High-End Apparel)
-  | "offwhite-brush"; // Commercial Minimalist: Studio Off-White with Subtle Brush Texture
+  | "offwhite-brush" // Commercial Minimalist: Studio Off-White with Subtle Brush Texture
+  | "soft-gradient"  // Smooth multi-stop gradient (like Canva/Apple style)
+  | "linen-texture"  // Subtle linen fabric texture pattern
+  | "geometric-minimal"; // Subtle geometric shapes in background
 
 export type SurfaceColorTone =
   | "warm-sand"      // #F5EBE1 / warm beige stone
@@ -69,6 +72,24 @@ export interface CustomCardState {
   brandFrameTopSub: string;          // e.g. "EST. 2014" or "STUDIO APPAREL"
   brandFrameBottomText: string;      // e.g. "KIDS", "SUMMER 26", "PREMIUM COTTON"
   brandFrameStyle: "minimal-frame" | "corner-bracket" | "clean-monochrome";
+
+  // 8. Custom Background Color (HEX)
+  customBgColor: string;           // Custom HEX color e.g. "#F5F0EB"
+  useCustomBgColor: boolean;       // Override surface type with custom color
+
+  // 9. Border & Frame Style
+  borderStyle: "none" | "thin" | "rounded" | "polaroid" | "vintage" | "shadow-frame";
+  borderColor: string;             // HEX color for border
+  borderWidth: number;             // 0-8px
+
+  // 10. Canvas Padding
+  canvasPadding: number;           // 0-60px inner padding
+
+  // 11. Background Gradient Controls
+  gradientEnabled: boolean;
+  gradientColor1: string;          // Start color
+  gradientColor2: string;          // End color
+  gradientAngle: number;           // 0-360 degrees
 }
 
 export const defaultCustomCardState: CustomCardState = {
@@ -109,6 +130,16 @@ export const defaultCustomCardState: CustomCardState = {
   brandFrameTopSub: "EST. 2014",
   brandFrameBottomText: "SUMMER 26",
   brandFrameStyle: "minimal-frame",
+  customBgColor: "#F5F0EB",
+  useCustomBgColor: false,
+  borderStyle: "none",
+  borderColor: "#E5E7EB",
+  borderWidth: 0,
+  canvasPadding: 0,
+  gradientEnabled: false,
+  gradientColor1: "#F8FAFC",
+  gradientColor2: "#E2E8F0",
+  gradientAngle: 135,
 };
 
 export interface StudioPreset {
@@ -128,6 +159,200 @@ export interface StudioPreset {
 }
 
 export const STUDIO_PRESETS: StudioPreset[] = [
+  {
+    id: "modern-gradient",
+    nameBn: "মডার্ন সফট গ্রেডিয়েন্ট",
+    nameEn: "Modern Soft Gradient",
+    taglineBn: "অ্যাপল-স্টাইল সফট মাল্টি-স্টপ গ্রেডিয়েন্ট, ক্লিন ও আল্ট্রা-মডার্ন লুক",
+    taglineEn: "Clean Apple-style soft gradient backdrop with ultra-clean aesthetic",
+    badgeTagBn: "মডার্ন সফট",
+    bgGradient: "from-slate-100 via-sky-50 to-indigo-100",
+    pedestalType: "none",
+    ambientLighting: "radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.75) 0%, transparent 65%)",
+    lightingTone: "pure-white",
+    decorativeSvgType: "clean",
+    textColor: "text-slate-800",
+    cardConfig: {
+      surfaceType: "soft-gradient",
+      surfaceTone: "pure-white",
+      floatingShadowEnabled: false,
+      showBrandFrame: false,
+      showBrandHeader: false,
+      showCollectionText: false,
+      showEditorialCopy: false,
+      showPalmShadow: false,
+      showWindowShadow: false,
+      showWoodenHanger: false,
+      showKinfolkProp: false,
+      showPampasGrass: false,
+      showDesertDunes: false,
+      showSunlightGlow: false,
+      showTileGrid: false,
+      gradientEnabled: true,
+      gradientColor1: "#F0F4F8",
+      gradientColor2: "#D9E2EC",
+      gradientAngle: 145,
+    },
+  },
+  {
+    id: "clean-ecommerce",
+    nameBn: "ই-কমার্স প্রোফেশনাল",
+    nameEn: "E-Commerce Professional",
+    taglineBn: "দারাজ ও শপিফাই ক্যাটালগের জন্য পিওর ক্লিন ব্যাকগ্রাউন্ড ও সূক্ষ্ম ড্রপ শ্যাডো",
+    taglineEn: "Clean white catalog backdrop with subtle drop shadow for Daraz & Shopify listings",
+    badgeTagBn: "ই-কমার্স প্রো",
+    bgGradient: "from-white via-slate-50 to-stone-100",
+    pedestalType: "none",
+    ambientLighting: "radial-gradient(circle at 50% 25%, rgba(255, 255, 255, 0.9) 0%, transparent 70%)",
+    lightingTone: "pure-white",
+    decorativeSvgType: "clean",
+    textColor: "text-slate-900",
+    cardConfig: {
+      surfaceType: "clean-white",
+      surfaceTone: "pure-white",
+      floatingShadowEnabled: true,
+      floatingShadowBlur: 20,
+      floatingShadowOpacity: 0.28,
+      floatingShadowWidth: 60,
+      floatingShadowHeight: 20,
+      floatingShadowDistance: 8,
+      showBrandFrame: false,
+      showBrandHeader: false,
+      showCollectionText: false,
+      showEditorialCopy: false,
+      showPalmShadow: false,
+      showWindowShadow: false,
+      showWoodenHanger: false,
+      showKinfolkProp: false,
+      showPampasGrass: false,
+      showDesertDunes: false,
+      showSunlightGlow: false,
+      showTileGrid: false,
+      canvasPadding: 20,
+    },
+  },
+  {
+    id: "fashion-editorial",
+    nameBn: "ফ্যাশন এডিটোরিয়াল",
+    nameEn: "Fashion Editorial",
+    taglineBn: "ওয়ার্ম প্লাস্টার স্টুডিও, কোরিয়ান ক্রাফট ব্র‍্যান্ড হেডার ও এডিটোরিয়াল মাইক্রো-কপি",
+    taglineEn: "Warm plaster studio backdrop, Korean craft brand header and editorial micro-copy",
+    badgeTagBn: "এডিটোরিয়াল",
+    bgGradient: "from-stone-100 via-amber-50 to-stone-200",
+    pedestalType: "none",
+    ambientLighting: "radial-gradient(circle at 35% 20%, rgba(254, 243, 199, 0.45) 0%, transparent 65%)",
+    lightingTone: "warm-gold",
+    decorativeSvgType: "clean",
+    textColor: "text-stone-900",
+    cardConfig: {
+      surfaceType: "warm-plaster",
+      surfaceTone: "warm-sand",
+      showBrandHeader: true,
+      brandName: "STUDIO",
+      brandTagline: "SUMMER COLLECTION",
+      brandPosition: "top-left",
+      brandStyle: "korean-craft",
+      showEditorialCopy: true,
+      editorialHeading: "ESSENTIAL MINIMALISM",
+      editorialBullets: "Finest organic fabric.\nTailored contemporary silhouette.\nEthically produced.",
+      editorialPosition: "bottom-left",
+      floatingShadowEnabled: true,
+      floatingShadowBlur: 26,
+      floatingShadowOpacity: 0.38,
+      floatingShadowWidth: 66,
+      floatingShadowHeight: 26,
+      floatingShadowDistance: 10,
+      showBrandFrame: false,
+      showCollectionText: false,
+      showPalmShadow: false,
+      showWindowShadow: false,
+      showWoodenHanger: false,
+      showKinfolkProp: false,
+      showPampasGrass: false,
+      showDesertDunes: false,
+      showSunlightGlow: false,
+      showTileGrid: false,
+    },
+  },
+  {
+    id: "social-media-bold",
+    nameBn: "সোশ্যাল মিডিয়া বোল্ড",
+    nameEn: "Social Media Bold",
+    taglineBn: "প্রাণবন্ত ভাইব্রেন্ট গ্রেডিয়েন্ট ও বোল্ড টাইপোগ্রাফি — ইনস্টাগ্রাম ও ফেসবুক পোস্টের জন্য",
+    taglineEn: "Vibrant eye-catching gradient with bold typography for Facebook & Instagram feeds",
+    badgeTagBn: "ভাইরাল ড্রপ",
+    bgGradient: "from-indigo-600 via-purple-600 to-pink-500",
+    pedestalType: "none",
+    ambientLighting: "radial-gradient(circle at 50% 25%, rgba(255, 255, 255, 0.3) 0%, transparent 65%)",
+    lightingTone: "luxury-amber",
+    decorativeSvgType: "clean",
+    textColor: "text-white",
+    cardConfig: {
+      surfaceType: "soft-gradient",
+      gradientEnabled: true,
+      gradientColor1: "#667EEA",
+      gradientColor2: "#764BA2",
+      gradientAngle: 135,
+      showCollectionText: true,
+      collectionSeason: "NEW DROP",
+      collectionSub: "TRENDING NOW",
+      collectionPosition: "bottom-right",
+      collectionStyle: "solid-bold",
+      floatingShadowEnabled: true,
+      floatingShadowBlur: 28,
+      floatingShadowOpacity: 0.40,
+      floatingShadowWidth: 68,
+      floatingShadowHeight: 28,
+      floatingShadowDistance: 12,
+      showBrandFrame: false,
+      showBrandHeader: false,
+      showEditorialCopy: false,
+      showPalmShadow: false,
+      showWindowShadow: false,
+      showWoodenHanger: false,
+      showKinfolkProp: false,
+      showPampasGrass: false,
+      showDesertDunes: false,
+      showSunlightGlow: false,
+      showTileGrid: false,
+    },
+  },
+  {
+    id: "linen-minimal",
+    nameBn: "লিনেন মিনিমাল",
+    nameEn: "Linen Minimal",
+    taglineBn: "সূক্ষ্ম লিনেন ফ্যাব্রিক টেক্সচার ও সফট লাইটিং — আর্টিসান ও হ্যান্ডমেড পণ্যের জন্য",
+    taglineEn: "Subtle linen texture with natural ambient lighting for artisan & handcrafted products",
+    badgeTagBn: "আর্টিসান লিনেন",
+    bgGradient: "from-stone-100 via-amber-50/70 to-stone-200",
+    pedestalType: "none",
+    ambientLighting: "radial-gradient(circle at 55% 25%, rgba(254, 243, 199, 0.35) 0%, transparent 70%)",
+    lightingTone: "warm-gold",
+    decorativeSvgType: "clean",
+    textColor: "text-stone-900",
+    cardConfig: {
+      surfaceType: "linen-texture",
+      surfaceTone: "warm-sand",
+      floatingShadowEnabled: true,
+      floatingShadowBlur: 24,
+      floatingShadowOpacity: 0.36,
+      floatingShadowWidth: 64,
+      floatingShadowHeight: 24,
+      floatingShadowDistance: 10,
+      showBrandFrame: false,
+      showBrandHeader: false,
+      showCollectionText: false,
+      showEditorialCopy: false,
+      showPalmShadow: false,
+      showWindowShadow: false,
+      showWoodenHanger: false,
+      showKinfolkProp: false,
+      showPampasGrass: false,
+      showDesertDunes: false,
+      showSunlightGlow: false,
+      showTileGrid: false,
+    },
+  },
   {
     id: "ilyn-concrete",
     nameBn: "আইলিন নিউট্রাল গ্রে কংক্রিট",
@@ -531,3 +756,4 @@ export const STUDIO_PRESETS: StudioPreset[] = [
     },
   },
 ];
+

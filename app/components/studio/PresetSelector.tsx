@@ -1,17 +1,56 @@
 "use client";
 
-import React from "react";
-import { Palette, Sliders, Sparkles, Layers, ChevronRight } from "lucide-react";
+import React, { useState } from "react";
+import { Palette, Sliders, Sparkles, Layers, ChevronRight, Check } from "lucide-react";
 import { Language } from "../../data/locales";
 import { STUDIO_PRESETS, StudioPreset } from "../../data/studioPresets";
+
+export type PresetCategoryKey = "all" | "modern" | "fashion" | "festive" | "catalog";
+
+export interface PresetCategoryConfig {
+  key: PresetCategoryKey;
+  labelBn: string;
+  labelEn: string;
+}
+
+export const CATEGORIES: PresetCategoryConfig[] = [
+  { key: "all", labelBn: "সব", labelEn: "All" },
+  { key: "modern", labelBn: "মডার্ন", labelEn: "Modern" },
+  { key: "fashion", labelBn: "ফ্যাশন", labelEn: "Fashion" },
+  { key: "festive", labelBn: "উৎসব", labelEn: "Festive" },
+  { key: "catalog", labelBn: "ক্যাটালগ", labelEn: "Catalog" },
+];
+
+export const PRESET_CATEGORIES: Record<string, PresetCategoryKey> = {
+  // Modern
+  "modern-gradient": "modern",
+  "clean-ecommerce": "modern",
+  "linen-minimal": "modern",
+  "fashion-editorial": "modern",
+  "social-media-bold": "modern",
+  // Fashion
+  "ilyn-concrete": "fashion",
+  "sailor-plaster": "fashion",
+  "apex-brush": "fashion",
+  "streetwear-flatlay": "fashion",
+  "wooden-hanger": "fashion",
+  "window-shadow": "fashion",
+  // Festive
+  "eid-festive": "festive",
+  "deshi-boutique": "festive",
+  "desert-arch": "festive",
+  // Catalog
+  "daraz-white": "catalog",
+  "luxury-minimalist": "catalog",
+};
 
 interface PresetSelectorProps {
   selectedPreset: StudioPreset;
   onSelect: (preset: StudioPreset) => void;
   lightingIntensity: number;
-  onLightingChange: (val: number) => void;
+  onLightingChange: (intensity: number) => void;
   showPedestal: boolean;
-  onPedestalToggle: (val: boolean) => void;
+  onPedestalToggle: (show: boolean) => void;
   onOpenCardCustomizer?: () => void;
   lang: Language;
 }
@@ -26,8 +65,20 @@ export function PresetSelector({
   onOpenCardCustomizer,
   lang,
 }: PresetSelectorProps) {
+  const [activeCategory, setActiveCategory] = useState<PresetCategoryKey>("all");
+
   const getPresetIcon = (id: string) => {
     switch (id) {
+      case "modern-gradient":
+        return "🎨";
+      case "clean-ecommerce":
+        return "🛒";
+      case "linen-minimal":
+        return "🌿";
+      case "fashion-editorial":
+        return "📸";
+      case "social-media-bold":
+        return "🔥";
       case "streetwear-flatlay":
         return "🧱";
       case "desert-arch":
@@ -44,84 +95,154 @@ export function PresetSelector({
         return "🏛️";
       case "daraz-white":
         return "⚪";
+      case "ilyn-concrete":
+        return "🏢";
+      case "sailor-plaster":
+        return "🏛️";
+      case "apex-brush":
+        return "🖌️";
       default:
         return "✨";
     }
   };
 
+  const getCategoryBadgeLabel = (id: string) => {
+    const cat = PRESET_CATEGORIES[id] || "modern";
+    switch (cat) {
+      case "modern":
+        return lang === "bn" ? "মডার্ন" : "Modern";
+      case "fashion":
+        return lang === "bn" ? "ফ্যাশন" : "Fashion";
+      case "festive":
+        return lang === "bn" ? "উৎসব" : "Festive";
+      case "catalog":
+        return lang === "bn" ? "ক্যাটালগ" : "Catalog";
+      default:
+        return lang === "bn" ? "স্টুডিও" : "Studio";
+    }
+  };
+
+  const filteredPresets = STUDIO_PRESETS.filter((preset) => {
+    if (activeCategory === "all") return true;
+    return PRESET_CATEGORIES[preset.id] === activeCategory;
+  });
+
   return (
     <div className="space-y-4">
-      {/* Preset Cards */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <label className="text-xs font-bold text-stone-800 flex items-center gap-1.5">
-            <Palette className="w-3.5 h-3.5 text-amber-500" />
-            <span>{lang === "bn" ? "মডার্ন থিম প্রিসেট (১-ক্লিকে সেট করুন)" : "Modern Studio Themes"}</span>
-          </label>
-          <span className="text-[10px] text-amber-700 font-mono font-bold bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
-            {STUDIO_PRESETS.length} {lang === "bn" ? "টি ট্রেন্ডিং থিম" : "Themes"}
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 gap-2">
-          {STUDIO_PRESETS.map((preset) => {
-            const isSelected = selectedPreset.id === preset.id;
-
-            return (
-              <button
-                key={preset.id}
-                onClick={() => onSelect(preset)}
-                className={`w-full text-left p-3 rounded-2xl border transition-all flex items-center justify-between cursor-pointer ${
-                  isSelected
-                    ? "bg-amber-50/80 border-amber-400 shadow-xs ring-2 ring-amber-400/20"
-                    : "bg-white border-stone-200 hover:border-stone-300 hover:bg-stone-50/50 shadow-2xs"
-                }`}
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  {/* Thumbnail Pill */}
-                  <div
-                    className={`w-9 h-9 rounded-xl bg-gradient-to-br ${preset.bgGradient} border border-white/60 shrink-0 shadow-xs flex items-center justify-center text-sm`}
-                  >
-                    {getPresetIcon(preset.id)}
-                  </div>
-
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={`text-xs font-bold truncate ${
-                          isSelected ? "text-amber-900" : "text-stone-800"
-                        }`}
-                      >
-                        {lang === "bn" ? preset.nameBn : preset.nameEn}
-                      </span>
-                      {preset.badgeTagBn && (
-                        <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-stone-100 text-stone-700 border border-stone-200 shrink-0">
-                          {preset.badgeTagBn}
-                        </span>
-                      )}
-                    </div>
-                    <div className="text-[10px] text-stone-500 line-clamp-1 mt-0.5">
-                      {lang === "bn" ? preset.taglineBn : preset.taglineEn}
-                    </div>
-                  </div>
-                </div>
-
-                {isSelected ? (
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-400 text-stone-950 shrink-0 ml-2">
-                    Active
-                  </span>
-                ) : (
-                  <ChevronRight className="w-4 h-4 text-stone-400 shrink-0 ml-2" />
-                )}
-              </button>
-            );
-          })}
-        </div>
+      {/* Header with Title and Preset Count */}
+      <div className="flex items-center justify-between">
+        <label className="text-xs font-bold text-stone-800 flex items-center gap-1.5">
+          <Palette className="w-3.5 h-3.5 text-amber-500" />
+          <span>{lang === "bn" ? "মডার্ন থিম প্রিসেট (১-ক্লিকে সেট করুন)" : "Modern Studio Themes"}</span>
+        </label>
+        <span className="text-[10px] text-amber-700 font-mono font-bold bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+          {filteredPresets.length} {lang === "bn" ? "টি থিম" : "Themes"}
+        </span>
       </div>
 
-      {/* Shortcut to Card Studio */}
+      {/* 1. Category Filter Chips */}
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none select-none">
+        {CATEGORIES.map((cat) => {
+          const isActive = activeCategory === cat.key;
+          return (
+            <button
+              key={cat.key}
+              type="button"
+              onClick={() => setActiveCategory(cat.key)}
+              className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-all duration-150 cursor-pointer ${
+                isActive
+                  ? "bg-amber-400 text-stone-950 font-bold shadow-xs border border-amber-400 ring-2 ring-amber-400/20"
+                  : "bg-white text-stone-600 hover:text-stone-900 border border-stone-200 hover:border-stone-300 hover:bg-stone-50"
+              }`}
+            >
+              {lang === "bn" ? cat.labelBn : cat.labelEn}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* 2. Presets 2-Column Grid on Desktop, 1-Column on Mobile */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+        {filteredPresets.map((preset) => {
+          const isSelected = selectedPreset.id === preset.id;
+          const categoryBadge = getCategoryBadgeLabel(preset.id);
+
+          return (
+            <button
+              key={preset.id}
+              type="button"
+              onClick={() => onSelect(preset)}
+              className={`w-full text-left rounded-xl border overflow-hidden transition-all duration-200 card-hover cursor-pointer group flex flex-col ${
+                isSelected
+                  ? "bg-amber-50/70 border-amber-400 ring-2 ring-amber-400/40 shadow-xs"
+                  : "bg-white border-stone-200 hover:border-stone-300 hover:bg-stone-50/40 shadow-2xs"
+              }`}
+            >
+              {/* Mini-Preview Swatch (h-16 rounded-t-xl) */}
+              <div
+                className={`h-16 w-full rounded-t-xl bg-gradient-to-br ${preset.bgGradient} relative flex items-center justify-center overflow-hidden border-b border-stone-100/90`}
+              >
+                {/* Center Icon */}
+                <span className="text-xl drop-shadow-sm select-none transform group-hover:scale-110 transition-transform duration-200">
+                  {getPresetIcon(preset.id)}
+                </span>
+
+                {/* Category Tag Badge */}
+                <div className="absolute top-2 left-2">
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-white/90 text-stone-800 backdrop-blur-xs border border-white/60 shadow-2xs">
+                    {categoryBadge}
+                  </span>
+                </div>
+
+                {/* Active Checkmark Icon */}
+                {isSelected && (
+                  <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-amber-400 text-stone-950 flex items-center justify-center shadow-xs ring-2 ring-white">
+                    <Check className="w-3 h-3 stroke-[3]" />
+                  </div>
+                )}
+              </div>
+
+              {/* Preset Details */}
+              <div className="p-2.5 flex-1 flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between gap-1 mb-0.5">
+                    <span
+                      className={`text-xs font-bold leading-tight truncate ${
+                        isSelected ? "text-amber-950" : "text-stone-900"
+                      }`}
+                    >
+                      {lang === "bn" ? preset.nameBn : preset.nameEn}
+                    </span>
+                    {isSelected && (
+                      <span className="text-[9px] font-extrabold px-1.5 py-0.2 rounded bg-amber-400 text-stone-950 shrink-0">
+                        {lang === "bn" ? "অ্যাক্টিভ" : "Active"}
+                      </span>
+                    )}
+                  </div>
+
+                  <p className="text-[10px] text-stone-500 line-clamp-1 leading-snug">
+                    {lang === "bn" ? preset.taglineBn : preset.taglineEn}
+                  </p>
+                </div>
+
+                {preset.badgeTagBn && (
+                  <div className="mt-1.5 pt-1.5 border-t border-stone-100 flex items-center justify-between text-[9px] text-stone-500">
+                    <span className="font-medium text-stone-600 truncate">{preset.badgeTagBn}</span>
+                    <span className="font-mono text-stone-400 text-[8px] uppercase">
+                      {preset.lightingTone.replace("-", " ")}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* 3. Shortcut to Deep Card Studio */}
       {onOpenCardCustomizer && (
         <button
+          type="button"
           onClick={onOpenCardCustomizer}
           className="w-full p-3 rounded-2xl bg-amber-50/60 border border-amber-300 hover:border-amber-400 hover:bg-amber-50 text-stone-800 flex items-center justify-between transition-all cursor-pointer shadow-2xs group"
         >
@@ -134,7 +255,9 @@ export function PresetSelector({
                 {lang === "bn" ? "কার্ড উপাদান কাস্টমাইজ করুন" : "Deep Card Customizer"}
               </div>
               <div className="text-[10px] text-stone-500">
-                {lang === "bn" ? "টাইলস, পাম শ্যাডো, হ্যাঙ্গার ও ব্র‍্যান্ড নাম এডিট করুন" : "Tweak tiles, shadows, props & brand logo"}
+                {lang === "bn"
+                  ? "ব্যাকগ্রাউন্ড কালার, গ্রেডিয়েন্ট, বর্ডার, টাইলস ও শ্যাডো এডিট করুন"
+                  : "Tweak colors, gradients, borders, shadows & brand logo"}
               </div>
             </div>
           </div>
@@ -142,7 +265,7 @@ export function PresetSelector({
         </button>
       )}
 
-      {/* Lighting & Pedestal Fine-Tuning */}
+      {/* 4. Lighting & Pedestal Fine-Tuning */}
       <div className="p-3.5 rounded-2xl bg-white border border-stone-200 shadow-2xs space-y-3">
         <div className="flex items-center justify-between text-xs font-bold text-stone-800">
           <span className="flex items-center gap-1.5">

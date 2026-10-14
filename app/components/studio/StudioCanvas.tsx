@@ -43,6 +43,24 @@ interface StudioCanvasProps {
   lang: Language;
 }
 
+export type ExtendedCustomCardState = Omit<CustomCardState, "surfaceType"> & {
+  surfaceType:
+    | CustomCardState["surfaceType"]
+    | "soft-gradient"
+    | "linen-texture"
+    | "geometric-minimal";
+  useCustomBgColor?: boolean;
+  customBgColor?: string;
+  gradientEnabled?: boolean;
+  gradientAngle?: number;
+  gradientColor1?: string;
+  gradientColor2?: string;
+  canvasPadding?: number;
+  borderStyle?: "none" | "thin" | "rounded" | "polaroid" | "vintage" | "shadow-frame" | string;
+  borderWidth?: number;
+  borderColor?: string;
+};
+
 export function StudioCanvas({
   productImage,
   selectedPreset,
@@ -66,7 +84,7 @@ export function StudioCanvas({
   const exportNodeRef = useRef<HTMLDivElement>(null);
 
   // Guarantee customCard is always safely defined
-  const card = customCard || defaultCustomCardState;
+  const card: ExtendedCustomCardState = (customCard || defaultCustomCardState) as ExtendedCustomCardState;
 
   const [isExporting, setIsExporting] = useState(false);
   const [isDraggingProduct, setIsDraggingProduct] = useState(false);
@@ -283,6 +301,12 @@ export function StudioCanvas({
 
   // Surface Tone Background Styling
   const getSurfaceBackground = () => {
+    if (card.useCustomBgColor && card.customBgColor) {
+      return "";
+    }
+    if (card.gradientEnabled && card.gradientColor1 && card.gradientColor2) {
+      return "";
+    }
     if (card.surfaceType === "concrete-grey") {
       return "bg-gradient-to-br from-[#F1F5F9] via-[#E2E8F0] to-[#CBD5E1]";
     }
@@ -291,6 +315,15 @@ export function StudioCanvas({
     }
     if (card.surfaceType === "offwhite-brush") {
       return "bg-gradient-to-br from-[#FCFBF9] via-[#F8F6F0] to-[#EFECE5]";
+    }
+    if (card.surfaceType === "soft-gradient") {
+      return "bg-[#f5f7fa]";
+    }
+    if (card.surfaceType === "linen-texture") {
+      return "bg-[#f8f6f0]";
+    }
+    if (card.surfaceType === "geometric-minimal") {
+      return "bg-[#f8fafc]";
     }
 
     switch (card.surfaceTone) {
@@ -314,7 +347,10 @@ export function StudioCanvas({
   const isLightTone =
     card.surfaceTone === "warm-sand" ||
     card.surfaceTone === "cool-grey" ||
-    card.surfaceTone === "pure-white";
+    card.surfaceTone === "pure-white" ||
+    card.surfaceType === "soft-gradient" ||
+    card.surfaceType === "linen-texture" ||
+    card.surfaceType === "geometric-minimal";
 
   return (
     <div className="flex flex-col items-center w-full max-w-xl mx-auto space-y-4">
@@ -392,6 +428,18 @@ export function StudioCanvas({
         onTouchCancel={handleTouchEnd}
         style={{
           aspectRatio: aspect === "1:1" ? "1 / 1" : "9 / 16",
+          ...(card.useCustomBgColor && card.customBgColor ? { backgroundColor: card.customBgColor } : {}),
+          ...(card.gradientEnabled && card.gradientColor1 && card.gradientColor2
+            ? {
+                background: `linear-gradient(${card.gradientAngle || 135}deg, ${card.gradientColor1}, ${card.gradientColor2})`,
+              }
+            : {}),
+          ...(card.canvasPadding ? { padding: `${card.canvasPadding}px` } : {}),
+          ...(card.borderStyle === "thin" ? { border: `${card.borderWidth || 1}px solid ${card.borderColor || '#E5E7EB'}` } : {}),
+          ...(card.borderStyle === "rounded" ? { border: `${card.borderWidth || 2}px solid ${card.borderColor || '#E5E7EB'}`, borderRadius: '24px' } : {}),
+          ...(card.borderStyle === "polaroid" ? { border: 'none', padding: `${Math.max(card.canvasPadding || 0, 12)}px ${Math.max(card.canvasPadding || 0, 12)}px ${Math.max(card.canvasPadding || 0, 48)}px`, backgroundColor: '#FFFFFF', boxShadow: '0 4px 20px rgba(0,0,0,0.12)' } : {}),
+          ...(card.borderStyle === "vintage" ? { border: `${card.borderWidth || 3}px double ${card.borderColor || '#D4A574'}`, boxShadow: 'inset 0 0 20px rgba(0,0,0,0.05)' } : {}),
+          ...(card.borderStyle === "shadow-frame" ? { boxShadow: `0 8px 32px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.08)`, border: `${card.borderWidth || 1}px solid ${card.borderColor || 'rgba(0,0,0,0.06)'}` } : {}),
         }}
         className={`relative w-full rounded-3xl overflow-hidden border border-stone-200/90 shadow-xl shadow-stone-200/50 select-none cursor-move touch-none transition-all duration-300 ${
           getSurfaceBackground()
@@ -519,6 +567,50 @@ export function StudioCanvas({
               }}
             />
           </div>
+        )}
+
+        {/* G. Soft Gradient (Apple/Canva Style) */}
+        {card.surfaceType === "soft-gradient" && (
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{ background: 'linear-gradient(135deg, #f5f7fa 0%, #e4e9f0 50%, #c3cfe2 100%)' }}
+          />
+        )}
+
+        {/* H. Subtle Linen / Canvas Fabric */}
+        {card.surfaceType === "linen-texture" && (
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <svg className="absolute inset-0 w-full h-full opacity-20" xmlns="http://www.w3.org/2000/svg">
+              <filter id="linenNoise">
+                <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="4" stitchTiles="stitch" />
+                <feColorMatrix type="matrix" values="0 0 0 0 0.12  0 0 0 0 0.1  0 0 0 0 0.08  0 0 0 0.12 0" />
+              </filter>
+              <rect width="100%" height="100%" filter="url(#linenNoise)" />
+            </svg>
+            <div className="absolute inset-0" style={{ background: 'radial-gradient(circle at 50% 30%, rgba(255,255,255,0.5) 0%, transparent 70%)' }} />
+          </div>
+        )}
+
+        {/* I. Subtle Geometric Minimal Shapes */}
+        {card.surfaceType === "geometric-minimal" && (
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <svg className="absolute inset-0 w-full h-full opacity-8" viewBox="0 0 400 400" preserveAspectRatio="none">
+              <circle cx="320" cy="80" r="120" fill="none" stroke="#94a3b8" strokeWidth="0.5" />
+              <circle cx="80" cy="320" r="80" fill="none" stroke="#94a3b8" strokeWidth="0.5" />
+              <line x1="0" y1="200" x2="400" y2="200" stroke="#cbd5e1" strokeWidth="0.3" />
+              <line x1="200" y1="0" x2="200" y2="400" stroke="#cbd5e1" strokeWidth="0.3" />
+            </svg>
+          </div>
+        )}
+
+        {/* J. Custom Gradient Background */}
+        {card.gradientEnabled && (
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: `linear-gradient(${card.gradientAngle || 135}deg, ${card.gradientColor1 || '#F8FAFC'}, ${card.gradientColor2 || '#E2E8F0'})`,
+            }}
+          />
         )}
 
         {/* ================================================================= */}
@@ -962,8 +1054,18 @@ export function StudioCanvas({
           </div>
         )}
 
+        {/* Cash on Delivery Badge (positioned at top-16 right-5 to prevent overlap with discount) */}
+        {badges.showCod && (
+          <div className="absolute top-16 right-5 z-35 pointer-events-none animate-in fade-in slide-in-from-right duration-300">
+            <div className="px-3 py-1 rounded-lg bg-sky-950/85 text-sky-200 border border-sky-400/40 text-[11px] font-bold shadow-md backdrop-blur-md flex items-center gap-1">
+              <ShieldCheck className="w-3 h-3 text-sky-400" />
+              <span>{badges.codText}</span>
+            </div>
+          </div>
+        )}
+
         {/* Bottom-Left: Free Delivery Ribbon */}
-        {badges.showDelivery && !card.showEditorialCopy && (
+        {badges.showDelivery && !(card.showEditorialCopy && card.editorialPosition === "bottom-left") && (
           <div className="absolute bottom-5 left-5 z-35 pointer-events-none animate-in fade-in slide-in-from-bottom-2 duration-300">
             <div className="px-3.5 py-1.5 rounded-xl bg-emerald-600/95 text-white font-bold text-xs shadow-xl border border-emerald-400/50 flex items-center gap-1.5 backdrop-blur-md">
               <Truck className="w-3.5 h-3.5 text-white shrink-0" />
@@ -972,22 +1074,12 @@ export function StudioCanvas({
           </div>
         )}
 
-        {/* Urgency Badge */}
-        {badges.showUrgency && !card.showCollectionText && (
+        {/* Urgency Badge (positioned at bottom-5 right-5) */}
+        {badges.showUrgency && !(card.showCollectionText && card.collectionPosition === "bottom-right") && (
           <div className="absolute bottom-5 right-5 z-35 pointer-events-none animate-in fade-in slide-in-from-bottom-2 duration-300">
             <div className="px-3 py-1.5 rounded-xl bg-amber-500/95 text-slate-950 font-extrabold text-[11px] shadow-lg border border-amber-300 flex items-center gap-1">
               <span>⚡</span>
               <span>{badges.urgencyText}</span>
-            </div>
-          </div>
-        )}
-
-        {/* Cash on Delivery Badge */}
-        {badges.showCod && (
-          <div className="absolute top-16 right-5 z-35 pointer-events-none animate-in fade-in slide-in-from-right duration-300">
-            <div className="px-3 py-1 rounded-lg bg-sky-950/85 text-sky-200 border border-sky-400/40 text-[11px] font-bold shadow-md backdrop-blur-md flex items-center gap-1">
-              <ShieldCheck className="w-3 h-3 text-sky-400" />
-              <span>{badges.codText}</span>
             </div>
           </div>
         )}
