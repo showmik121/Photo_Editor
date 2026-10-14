@@ -79,6 +79,24 @@ function StudioWorkspace() {
         ...preset.cardConfig,
       }));
     }
+    // Clean editorial & luxury fashion themes should not have spammy marketing stickers by default
+    if (
+      preset.id.startsWith("illiyeen-") ||
+      preset.id.startsWith("rawstitch-") ||
+      preset.id.startsWith("apex-") ||
+      preset.id === "fashion-editorial" ||
+      preset.id === "modern-gradient" ||
+      preset.id === "linen-minimal"
+    ) {
+      setBadges((prev) => ({
+        ...prev,
+        showPrice: false,
+        showDiscount: false,
+        showDelivery: false,
+        showCod: false,
+        showUrgency: false,
+      }));
+    }
     toast(
       lang === "bn" ? `থিম পরিবর্তন: ${preset.nameBn}` : `Theme Applied: ${preset.nameEn}`,
       lang === "bn" ? "কার্ডের ব্যাকগ্রাউন্ড ও প্রপস আপডেট হয়েছে।" : "Backdrop and studio props updated.",
@@ -102,9 +120,9 @@ function StudioWorkspace() {
     );
   };
 
-  // Badges State
+  // Badges State - Clean & uncluttered by default for high-end studio aesthetic
   const [badges, setBadges] = useState<BadgeState>({
-    showPrice: true,
+    showPrice: false,
     priceValue: defaultSample.defaultPrice,
     priceNumSystem: "bn",
     priceLabel: "PRICE:",
@@ -114,14 +132,14 @@ function StudioWorkspace() {
     priceOffsetX: 0,
     priceOffsetY: 0,
     pricePreset: "bottom-center",
-    showDiscount: true,
+    showDiscount: false,
     discountValue: defaultSample.defaultDiscount,
     discountLabel: "ছাড়",
-    showDelivery: true,
+    showDelivery: false,
     deliveryText: "সারা দেশে ফ্রি হোম ডেলিভারি",
-    showCod: true,
+    showCod: false,
     codText: "ক্যাশ অন ডেলিভারি সারা দেশে",
-    showUrgency: true,
+    showUrgency: false,
     urgencyText: "স্টক সীমিত",
     showTrust: false,
     trustText: "প্রোডাক্ট দেখে পেমেন্ট করুন",
