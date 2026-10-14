@@ -118,6 +118,8 @@ export function CardCustomizer({
     border: false,
     shadows: false,
     floatingShadow: false,
+    mannequin: false,
+    headline: false,
     brandFrame: false,
     brandHeader: false,
     collection: false,
@@ -132,11 +134,17 @@ export function CardCustomizer({
   };
 
   const surfaces: { id: SurfaceType; nameBn: string; nameEn: string; icon: string }[] = [
+    { id: "desert-dunes", nameBn: "ইলিয়ীন ডেজার্ট হরাইজন", nameEn: "Illiyeen Desert Dunes", icon: "🏜️" },
+    { id: "travertine-courtyard", nameBn: "ট্রাভার্টিন লাক্সারি কোর্টইয়ার্ড", nameEn: "Travertine Courtyard", icon: "🏛️" },
+    { id: "stone-wall", nameBn: "লাইমস্টোন প্লাস্টার ওয়াল", nameEn: "Limestone Stone Wall", icon: "🧱" },
     { id: "concrete-grey", nameBn: "আইলিন নিউট্রাল কংক্রিট", nameEn: "Neutral Grey Concrete", icon: "🏢" },
     { id: "warm-plaster", nameBn: "সেইলর সফট প্লাস্টার", nameEn: "Soft Warm Plaster", icon: "🏛️" },
     { id: "offwhite-brush", nameBn: "এপেক্স অফ-হোয়াইট ব্রাশ", nameEn: "Studio Off-White Brush", icon: "🖌️" },
     { id: "tiles", nameBn: "ক্যালিফোর্নিয়া টাইলস", nameEn: "Ceramic Tiles", icon: "🧱" },
     { id: "desert-arch", nameBn: "ইলিয়িন ডেজার্ট আর্চ", nameEn: "Desert Arch", icon: "🏜️" },
+    { id: "soft-gradient", nameBn: "মডার্ন সফট গ্রেডিয়েন্ট", nameEn: "Modern Soft Gradient", icon: "🎨" },
+    { id: "linen-texture", nameBn: "লিনেন ফেব্রিক টেক্সচার", nameEn: "Linen Fabric", icon: "🧶" },
+    { id: "geometric-minimal", nameBn: "মিনিমাল জিওমেট্রিক", nameEn: "Geometric Minimal", icon: "📐" },
     { id: "wall-minimal", nameBn: "মিনিমাল প্লাস্টার ওয়াল", nameEn: "Studio Wall", icon: "🏢" },
     { id: "podium-marble", nameBn: "মার্বেল পোডিয়াম", nameEn: "Marble Podium", icon: "🏛️" },
     { id: "terracotta", nameBn: "দেশি পোড়ামাটি", nameEn: "Terracotta Clay", icon: "🏺" },
@@ -160,6 +168,12 @@ export function CardCustomizer({
     { id: "polaroid", nameBn: "পোলারয়েড", nameEn: "Polaroid", icon: "📷" },
     { id: "vintage", nameBn: "ভিন্টেজ", nameEn: "Vintage", icon: "⧉" },
     { id: "shadow-frame", nameBn: "শ্যাডো ফ্রেম", nameEn: "Shadow", icon: "❏" },
+  ];
+
+  const mannequinStands: { id: NonNullable<CustomCardState["mannequinStand"]>; nameBn: string; nameEn: string; icon: string }[] = [
+    { id: "none", nameBn: "কোনো স্ট্যান্ড নেই", nameEn: "None", icon: "⊘" },
+    { id: "metallic-tripod", nameBn: "ক্রোম মেটালিক ট্রাইপড (ইলিয়ীন AW26)", nameEn: "Chrome Tripod", icon: "🥢" },
+    { id: "gold-tripod", nameBn: "লাক্সারি ব্রাস গোল্ড (ইলিয়ীন Luxury)", nameEn: "Brass Gold Tripod", icon: "✨" },
   ];
 
   return (
@@ -570,6 +584,73 @@ export function CardCustomizer({
               </div>
             </div>
           )}
+
+          {/* Festive Alpona Frame Border (Apex Sharodiya Theme) */}
+          <div className="p-3 rounded-xl bg-stone-50 border border-stone-200 shadow-2xs space-y-2 mt-2">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-xs font-semibold text-stone-800 block">
+                  {lang === "bn" ? "ঐতিহ্যবাহী শারদীয় আলপনা ফ্রেম (Alpona Border)" : "Festive Alpona Frame Border"}
+                </span>
+                <span className="text-[10px] text-stone-500">
+                  {lang === "bn" ? "উৎসবের জন্য আলপনা ফোক আর্ট বর্ডার (Apex Sharodiya)" : "Folk art festive border"}
+                </span>
+              </div>
+              <input
+                type="checkbox"
+                checked={cardState.showAlponaBorder}
+                onChange={(e) => update({ showAlponaBorder: e.target.checked })}
+                className="w-4 h-4 accent-amber-500 rounded cursor-pointer"
+              />
+            </div>
+            {cardState.showAlponaBorder && (
+              <div className="pt-2 flex items-center gap-2 border-t border-stone-200/60">
+                <input
+                  type="color"
+                  value={cardState.alponaBorderColor || "#E11D48"}
+                  onChange={(e) => update({ alponaBorderColor: e.target.value })}
+                  className="w-7 h-7 rounded border border-stone-300 cursor-pointer p-0.5 bg-white"
+                />
+                <input
+                  type="text"
+                  value={cardState.alponaBorderColor || "#E11D48"}
+                  onChange={(e) => update({ alponaBorderColor: e.target.value })}
+                  className="flex-1 px-3 py-1 rounded-lg bg-white border border-stone-200 text-xs font-mono font-bold text-stone-900 uppercase"
+                />
+              </div>
+            )}
+          </div>
+
+          {/* 3D Sculpted Festive Celebration Badge */}
+          <div className="p-3 rounded-xl bg-stone-50 border border-stone-200 shadow-2xs space-y-2">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-xs font-semibold text-stone-800 block">
+                  {lang === "bn" ? "থ্রিডি শারদীয়/উৎসব ব্যাজ (3D Festive Emblem)" : "3D Festive Celebration Emblem"}
+                </span>
+                <span className="text-[10px] text-stone-500">
+                  {lang === "bn" ? "টপ-লেফটে পদ্মফুল ও কার্ভড রিবন ব্যাজ" : "Lotus & festive ribbon emblem"}
+                </span>
+              </div>
+              <input
+                type="checkbox"
+                checked={cardState.showFestiveBadge}
+                onChange={(e) => update({ showFestiveBadge: e.target.checked })}
+                className="w-4 h-4 accent-amber-500 rounded cursor-pointer"
+              />
+            </div>
+            {cardState.showFestiveBadge && (
+              <div className="pt-2 border-t border-stone-200/60">
+                <input
+                  type="text"
+                  value={cardState.festiveBadgeText || ""}
+                  onChange={(e) => update({ festiveBadgeText: e.target.value })}
+                  placeholder="যেমন: শারদীয় উৎসব বা ঈদ কালেকশন"
+                  className="w-full px-3 py-1.5 rounded-lg bg-white border border-stone-200 text-xs font-semibold text-stone-900"
+                />
+              </div>
+            )}
+          </div>
         </div>
       </AccordionSection>
 
@@ -685,6 +766,63 @@ export function CardCustomizer({
               className="w-4 h-4 accent-amber-500 rounded cursor-pointer"
             />
           </div>
+
+          {/* Travertine Stone Blocks Prop (Raw Stitch Poster Style) */}
+          <div className="p-3 rounded-xl bg-stone-50 border border-stone-200 shadow-2xs flex items-center justify-between">
+            <div>
+              <span className="text-xs font-semibold text-stone-800 flex items-center gap-2">
+                <span>🧱</span>
+                <span>{lang === "bn" ? "ট্রাভার্টিন স্টোন ব্লক প্রপ (Stone Blocks)" : "Travertine Stone Blocks Prop"}</span>
+              </span>
+              <span className="text-[10px] text-stone-500 pl-6 block">
+                {lang === "bn" ? "নিচে বাম কোণে আর্কিটেকচারাল স্টোন প্যাডেস্টাল" : "Architectural stone pedestals in corner"}
+              </span>
+            </div>
+            <input
+              type="checkbox"
+              checked={cardState.showStoneBlocks}
+              onChange={(e) => update({ showStoneBlocks: e.target.checked })}
+              className="w-4 h-4 accent-amber-500 rounded cursor-pointer"
+            />
+          </div>
+
+          {/* Potted Tropical Plant Prop (Illiyeen Luxury Style) */}
+          <div className="p-3 rounded-xl bg-stone-50 border border-stone-200 shadow-2xs flex items-center justify-between">
+            <div>
+              <span className="text-xs font-semibold text-stone-800 flex items-center gap-2">
+                <span>🪴</span>
+                <span>{lang === "bn" ? "পট্টিড ট্রপিক্যাল প্ল্যান্ট (Potted Tropical Plant)" : "Potted Tropical Plant Prop"}</span>
+              </span>
+              <span className="text-[10px] text-stone-500 pl-6 block">
+                {lang === "bn" ? "ডানপাশে আধুনিক সিরামিক পটে সবুজ উদ্ভিদ" : "Lush Monstera plant in white ceramic planter"}
+              </span>
+            </div>
+            <input
+              type="checkbox"
+              checked={cardState.showPottedPlant}
+              onChange={(e) => update({ showPottedPlant: e.target.checked })}
+              className="w-4 h-4 accent-amber-500 rounded cursor-pointer"
+            />
+          </div>
+
+          {/* Swimming Pool Water Edge Reflection (Illiyeen Luxury Style) */}
+          <div className="p-3 rounded-xl bg-stone-50 border border-stone-200 shadow-2xs flex items-center justify-between">
+            <div>
+              <span className="text-xs font-semibold text-stone-800 flex items-center gap-2">
+                <span>🌊</span>
+                <span>{lang === "bn" ? "সুইমিং পুল ওয়াটার এজ (Pool Water Reflection)" : "Swimming Pool Water Edge"}</span>
+              </span>
+              <span className="text-[10px] text-stone-500 pl-6 block">
+                {lang === "bn" ? "নিচের অংশে টার্কোইজ রিফ্লেকশন ওয়াটার পুল" : "Turquoise swimming pool reflection at bottom"}
+              </span>
+            </div>
+            <input
+              type="checkbox"
+              checked={cardState.showPoolEdge}
+              onChange={(e) => update({ showPoolEdge: e.target.checked })}
+              className="w-4 h-4 accent-amber-500 rounded cursor-pointer"
+            />
+          </div>
         </div>
       </AccordionSection>
 
@@ -787,6 +925,171 @@ export function CardCustomizer({
                   className="w-full accent-amber-500 h-1.5 bg-stone-200 rounded-lg cursor-pointer"
                 />
               </div>
+            </div>
+          )}
+        </div>
+      </AccordionSection>
+
+      {/* =================================================================== */}
+      {/* 6B. MANNEQUIN STAND ENGINE (ILLIYEEN AW26 / LUXURY)                 */}
+      {/* =================================================================== */}
+      <AccordionSection
+        id="mannequin"
+        isOpen={openSections.mannequin}
+        onToggle={() => toggleSection("mannequin")}
+        icon={<Sparkles className="w-4 h-4 text-amber-500" />}
+        title={lang === "bn" ? "৬বি. ম্যানিকুইন স্ট্যান্ড (Mannequin Stand)" : "6B. Mannequin Stand Engine"}
+        subtitle={lang === "bn" ? "মেটালিক ক্রোম বা গোল্ডেন ট্রাইপড স্ট্যান্ড" : "Metallic chrome or luxury brass tripod stand"}
+        badge={cardState.mannequinStand && cardState.mannequinStand !== "none" ? (lang === "bn" ? "সক্রিয়" : "Active") : undefined}
+      >
+        <div className="space-y-3 pt-1">
+          <div className="text-[11px] font-semibold text-stone-600">
+            {lang === "bn" ? "ম্যানিকুইন স্ট্যান্ডের ধরণ পছন্দ করুন:" : "Choose Mannequin Stand Style:"}
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            {mannequinStands.map((m) => {
+              const isSelected = (cardState.mannequinStand || "none") === m.id;
+              return (
+                <button
+                  key={m.id}
+                  type="button"
+                  onClick={() => update({ mannequinStand: m.id })}
+                  className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-1.5 ${
+                    isSelected
+                      ? "bg-amber-50/80 border-amber-400 text-stone-900 shadow-2xs ring-2 ring-amber-400/20 font-bold"
+                      : "bg-white border-stone-200 text-stone-700 hover:border-stone-300 shadow-2xs"
+                  }`}
+                >
+                  <span className="text-xl select-none">{m.icon}</span>
+                  <span className="text-[11px] leading-tight font-semibold">
+                    {lang === "bn" ? m.nameBn : m.nameEn}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </AccordionSection>
+
+      {/* =================================================================== */}
+      {/* 6C. HERO PRODUCT HEADLINE & FOOTER (RAW STITCH POSTER)              */}
+      {/* =================================================================== */}
+      <AccordionSection
+        id="headline"
+        isOpen={openSections.headline}
+        onToggle={() => toggleSection("headline")}
+        icon={<Type className="w-4 h-4 text-emerald-600" />}
+        title={lang === "bn" ? "৬সি. প্রোডাক্ট হেডলাইন ও ফুটার সি.টি.এ" : "6C. Product Headline & Footer"}
+        subtitle={lang === "bn" ? "বোল্ড ড্রপ শোল্ডার হেডলাইন ও শপ-নাও লিঙ্ক" : "Bold headline poster & website link CTA"}
+        badge={cardState.showProductHeadline || cardState.showFooterCta ? (lang === "bn" ? "সক্রিয়" : "Active") : undefined}
+      >
+        <div className="space-y-3 pt-1">
+          {/* Headline Toggle */}
+          <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 border border-stone-200">
+            <div>
+              <span className="text-xs font-semibold text-stone-800 block">
+                {lang === "bn" ? "বোল্ড প্রোডাক্ট হেডলাইন শো করুন" : "Show Bold Product Headline"}
+              </span>
+              <span className="text-[10px] text-stone-500">
+                {lang === "bn" ? "যেমন: STRIPED DROP SHOULDER" : "e.g. STRIPED DROP SHOULDER"}
+              </span>
+            </div>
+            <input
+              type="checkbox"
+              checked={cardState.showProductHeadline}
+              onChange={(e) => update({ showProductHeadline: e.target.checked })}
+              className="w-4 h-4 accent-amber-500 rounded cursor-pointer"
+            />
+          </div>
+
+          {cardState.showProductHeadline && (
+            <div className="p-3 rounded-xl bg-stone-50/70 border border-stone-200 space-y-2.5">
+              <div>
+                <label className="text-[10px] font-semibold text-stone-500 uppercase block mb-1">
+                  {lang === "bn" ? "হেডলাইন লাইন ১ (Main Title):" : "Headline Line 1:"}
+                </label>
+                <input
+                  type="text"
+                  value={cardState.headlineMain || ""}
+                  onChange={(e) => update({ headlineMain: e.target.value })}
+                  placeholder="STRIPED"
+                  className="w-full px-3 py-1.5 rounded-lg bg-white border border-stone-200 text-xs font-black uppercase text-stone-900"
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] font-semibold text-stone-500 uppercase block mb-1">
+                  {lang === "bn" ? "হেডলাইন লাইন ২ (Secondary):" : "Headline Line 2:"}
+                </label>
+                <input
+                  type="text"
+                  value={cardState.headlineSecondary || ""}
+                  onChange={(e) => update({ headlineSecondary: e.target.value })}
+                  placeholder="DROP SHOULDER"
+                  className="w-full px-3 py-1.5 rounded-lg bg-white border border-stone-200 text-xs font-black uppercase text-stone-900"
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] font-semibold text-stone-500 uppercase block mb-1">
+                  {lang === "bn" ? "সাব-টাইটেল (Subtitle):" : "Subtitle / Features:"}
+                </label>
+                <input
+                  type="text"
+                  value={cardState.headlineSub || ""}
+                  onChange={(e) => update({ headlineSub: e.target.value })}
+                  placeholder="— Relaxed Fit • Everyday Style —"
+                  className="w-full px-3 py-1.5 rounded-lg bg-white border border-stone-200 text-xs font-medium text-stone-700"
+                />
+              </div>
+
+              {/* Headline Color */}
+              <div className="pt-1 flex items-center gap-2">
+                <span className="text-[10px] text-stone-600 font-semibold">{lang === "bn" ? "রং:" : "Color:"}</span>
+                <input
+                  type="color"
+                  value={cardState.headlineColor || "#1B4332"}
+                  onChange={(e) => update({ headlineColor: e.target.value })}
+                  className="w-6 h-6 rounded border border-stone-300 cursor-pointer p-0.5 bg-white"
+                />
+                <input
+                  type="text"
+                  value={cardState.headlineColor || "#1B4332"}
+                  onChange={(e) => update({ headlineColor: e.target.value })}
+                  className="w-24 px-2 py-0.5 rounded bg-white border border-stone-200 text-xs font-mono font-bold uppercase"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Footer CTA Toggle */}
+          <div className="flex items-center justify-between p-3 rounded-xl bg-stone-50 border border-stone-200">
+            <div>
+              <span className="text-xs font-semibold text-stone-800 block">
+                {lang === "bn" ? "ওয়েবসাইট ফুটার সি.টি.এ (Footer Link)" : "Website Footer CTA"}
+              </span>
+              <span className="text-[10px] text-stone-500">
+                {lang === "bn" ? "যেমন: SHOP NOW | RAWSTITCH.COM.BD" : "e.g. SHOP NOW | RAWSTITCH.COM.BD"}
+              </span>
+            </div>
+            <input
+              type="checkbox"
+              checked={cardState.showFooterCta}
+              onChange={(e) => update({ showFooterCta: e.target.checked })}
+              className="w-4 h-4 accent-amber-500 rounded cursor-pointer"
+            />
+          </div>
+
+          {cardState.showFooterCta && (
+            <div className="p-3 rounded-xl bg-stone-50/70 border border-stone-200">
+              <input
+                type="text"
+                value={cardState.footerCtaText || ""}
+                onChange={(e) => update({ footerCtaText: e.target.value })}
+                placeholder="SHOP NOW | RAWSTITCH.COM.BD"
+                className="w-full px-3 py-1.5 rounded-lg bg-white border border-stone-200 text-xs font-bold tracking-wider text-stone-800 uppercase"
+              />
             </div>
           )}
         </div>
@@ -1067,6 +1370,56 @@ export function CardCustomizer({
               </div>
             </div>
           )}
+
+          {/* Sub-Brand / Luxury Category Badge (e.g. PLATINUM, LUXURY) */}
+          <div className="p-3 rounded-xl bg-stone-50 border border-stone-200 shadow-2xs space-y-2 mt-2">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-xs font-semibold text-stone-800 block">
+                  {lang === "bn" ? "সাব-ব্র্যান্ড / লাক্সারি ব্যাজ (Sub-Brand Badge)" : "Sub-Brand / Category Badge"}
+                </span>
+                <span className="text-[10px] text-stone-500">
+                  {lang === "bn" ? "যেমন: P L A T I N U M বা L U X U R Y" : "e.g. P L A T I N U M or L U X U R Y"}
+                </span>
+              </div>
+              <input
+                type="checkbox"
+                checked={cardState.showSubBrandBadge}
+                onChange={(e) => update({ showSubBrandBadge: e.target.checked })}
+                className="w-4 h-4 accent-amber-500 rounded cursor-pointer"
+              />
+            </div>
+            {cardState.showSubBrandBadge && (
+              <div className="pt-2 border-t border-stone-200/60 grid grid-cols-2 gap-2">
+                <div>
+                  <label className="text-[10px] font-semibold text-stone-600 block mb-1">
+                    {lang === "bn" ? "টেক্সট:" : "Text:"}
+                  </label>
+                  <input
+                    type="text"
+                    value={cardState.subBrandBadgeText || ""}
+                    onChange={(e) => update({ subBrandBadgeText: e.target.value })}
+                    placeholder="PLATINUM"
+                    className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-stone-200 text-xs font-bold uppercase text-stone-900"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-semibold text-stone-600 block mb-1">
+                    {lang === "bn" ? "পজিশন:" : "Position:"}
+                  </label>
+                  <select
+                    value={cardState.subBrandBadgePosition || "bottom-left"}
+                    onChange={(e) => update({ subBrandBadgePosition: e.target.value as any })}
+                    className="w-full px-2.5 py-1.5 rounded-lg bg-white border border-stone-200 text-xs text-stone-900"
+                  >
+                    <option value="bottom-left">{lang === "bn" ? "নিচে বামে (PLATINUM)" : "Bottom Left"}</option>
+                    <option value="top-right">{lang === "bn" ? "উপরে ডানে (LUXURY)" : "Top Right"}</option>
+                    <option value="bottom-right">{lang === "bn" ? "নিচে ডানে" : "Bottom Right"}</option>
+                  </select>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </AccordionSection>
 

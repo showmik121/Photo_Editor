@@ -1,6 +1,9 @@
 export type SurfaceType =
   | "tiles"          // Ceramic stone tiles grid (Raw Stitch streetwear flatlay)
   | "desert-arch"    // Desert sand dunes with architectural archway (Illiyeen Panjabi)
+  | "desert-dunes"   // Desert sand dunes horizon under warm sky (Illiyeen AW26 Platinum)
+  | "travertine-courtyard" // Modern Mediterranean travertine courtyard wall with sharp geometric shadow & pool (Illiyeen Luxury)
+  | "stone-wall"     // Limestone / travertine plaster wall (Raw Stitch drop shoulder poster)
   | "wall-minimal"   // Clean warm plaster/studio wall
   | "podium-marble"  // High-end marble pedestal & floor
   | "terracotta"     // Deshi warm terracotta / clay
@@ -90,6 +93,35 @@ export interface CustomCardState {
   gradientColor1: string;          // Start color
   gradientColor2: string;          // End color
   gradientAngle: number;           // 0-360 degrees
+
+  // 12. Realistic Mannequin Stand Engine (Illiyeen AW26 / Luxury)
+  mannequinStand: "none" | "metallic-tripod" | "gold-tripod";
+
+  // 13. High-End Architectural Props
+  showStoneBlocks: boolean;        // Travertine architectural pedestals (Raw Stitch drop shoulder)
+  showPottedPlant: boolean;        // Lush potted tropical plant in ceramic planter (Illiyeen Luxury)
+  showPoolEdge: boolean;           // Turquoise swimming pool water reflection edge
+
+  // 14. Festive Celebration Embellishments (Apex Festive Sharodiya / Eid)
+  showFestiveBadge: boolean;
+  festiveBadgeText: string;        // e.g. "শারদীয় উৎসব"
+  festiveBadgeStyle: "lotus-sculpted" | "gold-medallion" | "ribbon-festive";
+  showAlponaBorder: boolean;       // Traditional ornate festive motif border
+  alponaBorderColor: string;       // Border color HEX
+
+  // 15. Hero Product Headline & Footer (Raw Stitch poster style)
+  showProductHeadline: boolean;
+  headlineMain: string;            // e.g. "STRIPED"
+  headlineSecondary: string;       // e.g. "DROP SHOULDER"
+  headlineSub: string;             // e.g. "— Relaxed Fit • Everyday Style —"
+  headlineColor: string;           // e.g. "#1B4332"
+  showFooterCta: boolean;
+  footerCtaText: string;           // e.g. "SHOP NOW | RAWSTITCH.COM.BD"
+
+  // 16. Sub-Brand / Luxury Category Badge (e.g. PLATINUM, LUXURY)
+  showSubBrandBadge: boolean;
+  subBrandBadgeText: string;       // e.g. "PLATINUM" or "LUXURY"
+  subBrandBadgePosition: "bottom-left" | "top-right" | "bottom-right";
 }
 
 export const defaultCustomCardState: CustomCardState = {
@@ -140,6 +172,25 @@ export const defaultCustomCardState: CustomCardState = {
   gradientColor1: "#F8FAFC",
   gradientColor2: "#E2E8F0",
   gradientAngle: 135,
+  mannequinStand: "none",
+  showStoneBlocks: false,
+  showPottedPlant: false,
+  showPoolEdge: false,
+  showFestiveBadge: false,
+  festiveBadgeText: "শারদীয় উৎসব",
+  festiveBadgeStyle: "lotus-sculpted",
+  showAlponaBorder: false,
+  alponaBorderColor: "#E11D48",
+  showProductHeadline: false,
+  headlineMain: "STRIPED",
+  headlineSecondary: "DROP SHOULDER",
+  headlineSub: "— Relaxed Fit • Everyday Style —",
+  headlineColor: "#164e63",
+  showFooterCta: false,
+  footerCtaText: "SHOP NOW | RAWSTITCH.COM.BD",
+  showSubBrandBadge: false,
+  subBrandBadgeText: "PLATINUM",
+  subBrandBadgePosition: "bottom-left",
 };
 
 export interface StudioPreset {
@@ -159,6 +210,189 @@ export interface StudioPreset {
 }
 
 export const STUDIO_PRESETS: StudioPreset[] = [
+  {
+    id: "illiyeen-desert-aw26",
+    nameBn: "ইলিয়ীন ডেজার্ট AW26",
+    nameEn: "Illiyeen Desert Horizon AW26",
+    taglineBn: "মরুভূমির দিগন্ত, মেটালিক ম্যানিকুইন স্ট্যান্ড ও AW26 গ্লোয়িং টাইপোগ্রাফি",
+    taglineEn: "Desert sand dunes horizon, metallic mannequin stand & AW26 glowing typography",
+    badgeTagBn: "ইলিয়ীন AW26",
+    bgGradient: "from-amber-100 via-orange-50 to-stone-200",
+    pedestalType: "none",
+    ambientLighting: "radial-gradient(circle at 50% 20%, rgba(254, 240, 138, 0.45) 0%, transparent 65%)",
+    lightingTone: "warm-gold",
+    decorativeSvgType: "clean",
+    textColor: "text-stone-900",
+    cardConfig: {
+      surfaceType: "desert-dunes",
+      surfaceTone: "warm-sand",
+      mannequinStand: "metallic-tripod",
+      showBrandHeader: true,
+      brandName: "عليين ILLIYEEN",
+      brandTagline: "HAUTE COUTURE",
+      brandPosition: "top-left",
+      brandStyle: "luxury-badge",
+      showCollectionText: true,
+      collectionSeason: "AW26",
+      collectionSub: "NEW ARRIVALS",
+      collectionPosition: "bottom-right",
+      collectionStyle: "glowing-outline",
+      showSubBrandBadge: true,
+      subBrandBadgeText: "P L A T I N U M",
+      subBrandBadgePosition: "bottom-left",
+      showSunlightGlow: true,
+      floatingShadowEnabled: true,
+      floatingShadowBlur: 20,
+      floatingShadowOpacity: 0.35,
+      floatingShadowWidth: 50,
+      floatingShadowHeight: 18,
+      floatingShadowDistance: 6,
+    },
+  },
+  {
+    id: "rawstitch-drop-shoulder",
+    nameBn: "র' স্টিচ আরবান পোস্টার",
+    nameEn: "Raw Stitch Urban Poster",
+    taglineBn: "ট্রাভার্টিন স্টোন ব্লক, ড্যাপল্ড পাম শ্যাডো ও বোল্ড হেডলাইন পোস্টার",
+    taglineEn: "Travertine stone blocks, dappled palm shadows & bold streetwear headline",
+    badgeTagBn: "আরবান পোস্টার",
+    bgGradient: "from-stone-100 via-amber-50 to-stone-200",
+    pedestalType: "none",
+    ambientLighting: "radial-gradient(circle at 40% 20%, rgba(255, 255, 255, 0.8) 0%, transparent 70%)",
+    lightingTone: "pure-white",
+    decorativeSvgType: "clean",
+    textColor: "text-stone-900",
+    cardConfig: {
+      surfaceType: "stone-wall",
+      surfaceTone: "warm-sand",
+      showStoneBlocks: true,
+      showPalmShadow: true,
+      palmShadowOpacity: 65,
+      showBrandHeader: true,
+      brandName: "RAW STITCH",
+      brandTagline: "EVERY STITCH HAS A STORY",
+      brandPosition: "top-center",
+      brandStyle: "minimal",
+      showProductHeadline: true,
+      headlineMain: "STRIPED",
+      headlineSecondary: "DROP SHOULDER",
+      headlineSub: "— Relaxed Fit • Everyday Style —",
+      headlineColor: "#1B4332",
+      showFooterCta: true,
+      footerCtaText: "SHOP NOW | RAWSTITCH.COM.BD",
+      floatingShadowEnabled: true,
+      floatingShadowBlur: 24,
+      floatingShadowOpacity: 0.38,
+      floatingShadowWidth: 62,
+    },
+  },
+  {
+    id: "rawstitch-ceramic-flatlay",
+    nameBn: "র' স্টিচ সিরামিক ফ্ল্যাটলে",
+    nameEn: "Raw Stitch Ceramic Flatlay",
+    taglineBn: "সিরামিক টাইলস ফ্লোর, কিনফোক ম্যাগাজিন প্রপ ও পাম শ্যাডো এডিটোরিয়াল",
+    taglineEn: "Ceramic tile floor, Kinfolk magazine prop & palm shadow editorial story",
+    badgeTagBn: "ফ্ল্যাটলে",
+    bgGradient: "from-stone-100 via-slate-50 to-stone-200",
+    pedestalType: "none",
+    ambientLighting: "radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.85) 0%, transparent 65%)",
+    lightingTone: "pure-white",
+    decorativeSvgType: "clean",
+    textColor: "text-stone-900",
+    cardConfig: {
+      surfaceType: "tiles",
+      surfaceTone: "warm-sand",
+      showTileGrid: true,
+      showKinfolkProp: true,
+      showPalmShadow: true,
+      palmShadowOpacity: 55,
+      showBrandHeader: true,
+      brandName: "RAW STITCH",
+      brandTagline: "PREMIUM STREETWEAR",
+      brandPosition: "top-left",
+      brandStyle: "minimal",
+      showEditorialCopy: true,
+      editorialHeading: "TIMELESS STRIPES.\nBUILT TO LAST.",
+      editorialBullets: "Clean design.\nPremium fabric.\nEveryday comfort.",
+      editorialPosition: "bottom-left",
+      floatingShadowEnabled: true,
+      floatingShadowBlur: 22,
+      floatingShadowOpacity: 0.35,
+      floatingShadowWidth: 60,
+    },
+  },
+  {
+    id: "apex-festive-alpona",
+    nameBn: "এপেক্স শারদীয় আলপনা",
+    nameEn: "Apex Festive Celebration",
+    taglineBn: "আলপনা আর্ট বর্ডার, শারদীয় উৎসব থ্রিডি ব্যাজ ও টেরাকোটা ব্যাকড্রপ",
+    taglineEn: "Ornate traditional Alpona frame border, 3D festive badge & terracotta backdrop",
+    badgeTagBn: "শারদীয় উৎসব",
+    bgGradient: "from-amber-100 via-rose-50 to-orange-100",
+    pedestalType: "none",
+    ambientLighting: "radial-gradient(circle at 50% 40%, rgba(255, 237, 213, 0.7) 0%, transparent 75%)",
+    lightingTone: "warm-gold",
+    decorativeSvgType: "clean",
+    textColor: "text-stone-900",
+    cardConfig: {
+      surfaceType: "terracotta",
+      surfaceTone: "warm-sand",
+      showAlponaBorder: true,
+      alponaBorderColor: "#E11D48",
+      showFestiveBadge: true,
+      festiveBadgeText: "শারদীয় উৎসবে No. 1 স্টাইলে",
+      festiveBadgeStyle: "lotus-sculpted",
+      showBrandHeader: true,
+      brandName: "Apex",
+      brandTagline: "NO. 1 FOOTWEAR",
+      brandPosition: "top-right",
+      brandStyle: "minimal",
+      floatingShadowEnabled: true,
+      floatingShadowBlur: 25,
+      floatingShadowOpacity: 0.45,
+      floatingShadowWidth: 65,
+      floatingShadowHeight: 28,
+    },
+  },
+  {
+    id: "illiyeen-luxury-courtyard",
+    nameBn: "ইলিয়ীন লাক্সারি কোর্টইয়ার্ড",
+    nameEn: "Illiyeen Luxury Courtyard",
+    taglineBn: "মডার্ন কোর্টইয়ার্ড ট্রাভার্টিন আর্কিটেকচার, গোল্ডেন ম্যানিকুইন ও পুল রিফ্লেকশন",
+    taglineEn: "Modern architectural courtyard wall, golden mannequin stand & pool reflection",
+    badgeTagBn: "লাক্সারি কোর্টইয়ার্ড",
+    bgGradient: "from-amber-50 via-stone-100 to-sky-100",
+    pedestalType: "none",
+    ambientLighting: "radial-gradient(circle at 60% 25%, rgba(255, 255, 255, 0.9) 0%, transparent 70%)",
+    lightingTone: "warm-gold",
+    decorativeSvgType: "clean",
+    textColor: "text-stone-900",
+    cardConfig: {
+      surfaceType: "travertine-courtyard",
+      surfaceTone: "warm-sand",
+      mannequinStand: "gold-tripod",
+      showPottedPlant: true,
+      showPoolEdge: true,
+      showBrandHeader: true,
+      brandName: "عليين ILLIYEEN",
+      brandTagline: "HAUTE COUTURE",
+      brandPosition: "top-left",
+      brandStyle: "luxury-badge",
+      showSubBrandBadge: true,
+      subBrandBadgeText: "L U X U R Y",
+      subBrandBadgePosition: "top-right",
+      showCollectionText: true,
+      collectionSeason: "AW26",
+      collectionSub: "NEW ARRIVAL",
+      collectionPosition: "bottom-right",
+      collectionStyle: "glowing-outline",
+      floatingShadowEnabled: true,
+      floatingShadowBlur: 22,
+      floatingShadowOpacity: 0.40,
+      floatingShadowWidth: 55,
+      floatingShadowHeight: 20,
+    },
+  },
   {
     id: "modern-gradient",
     nameBn: "মডার্ন সফট গ্রেডিয়েন্ট",

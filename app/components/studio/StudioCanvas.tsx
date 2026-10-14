@@ -325,6 +325,15 @@ export function StudioCanvas({
     if (card.surfaceType === "geometric-minimal") {
       return "bg-[#f8fafc]";
     }
+    if (card.surfaceType === "desert-dunes") {
+      return "bg-gradient-to-b from-[#FFFBEB] via-[#FEF3C7] to-[#F5EBE1]";
+    }
+    if (card.surfaceType === "travertine-courtyard") {
+      return "bg-[#E8DFC8]";
+    }
+    if (card.surfaceType === "stone-wall") {
+      return "bg-[#EFE8DE]";
+    }
 
     switch (card.surfaceTone) {
       case "warm-sand":
@@ -350,7 +359,10 @@ export function StudioCanvas({
     card.surfaceTone === "pure-white" ||
     card.surfaceType === "soft-gradient" ||
     card.surfaceType === "linen-texture" ||
-    card.surfaceType === "geometric-minimal";
+    card.surfaceType === "geometric-minimal" ||
+    card.surfaceType === "desert-dunes" ||
+    card.surfaceType === "travertine-courtyard" ||
+    card.surfaceType === "stone-wall";
 
   return (
     <div className="flex flex-col items-center w-full max-w-xl mx-auto space-y-4">
@@ -603,7 +615,84 @@ export function StudioCanvas({
           </div>
         )}
 
-        {/* J. Custom Gradient Background */}
+        {/* J. Desert Sand Dunes Horizon with Studio Floor (Exact Match to Image 1: Illiyeen AW26 Platinum) */}
+        {card.surfaceType === "desert-dunes" && (
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            {/* Soft glowing desert sky with radiant sun glow */}
+            <div className="absolute inset-0 bg-gradient-to-b from-[#FDF8EE] via-[#F8ECD8] to-[#E8D2B5]" />
+            <div
+              className="absolute top-0 inset-x-0 h-2/3 pointer-events-none"
+              style={{
+                background: "radial-gradient(ellipse at 50% 15%, rgba(255, 255, 255, 0.95) 0%, rgba(254, 243, 199, 0.5) 45%, transparent 75%)",
+              }}
+            />
+
+            {/* Distant Rolling Dunes Layers */}
+            <svg viewBox="0 0 1000 650" className="absolute bottom-20 inset-x-0 w-full h-auto" preserveAspectRatio="none">
+              <path d="M0 290 Q 220 220 480 260 T 1000 230 L 1000 650 L 0 650 Z" fill="#E6C8A6" opacity="0.6" />
+              <path d="M0 320 Q 320 250 640 300 T 1000 270 L 1000 650 L 0 650 Z" fill="#DCB68E" opacity="0.85" />
+              <path d="M0 360 Q 260 300 520 340 T 1000 310 L 1000 650 L 0 650 Z" fill="#CE9F70" />
+              <path d="M0 400 Q 380 340 760 380 T 1000 350 L 1000 650 L 0 650 Z" fill="#BA8857" opacity="0.5" />
+            </svg>
+
+            {/* Modern Studio Horizon Line & Polished Floor */}
+            <div className="absolute bottom-0 inset-x-0 h-20 sm:h-24 bg-gradient-to-b from-[#FAF4EC] to-[#EFE2D2] border-t border-stone-800/80 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]" />
+          </div>
+        )}
+
+        {/* K. Travertine Courtyard Wall with Sunlight Beam (Exact match to Image 5: Illiyeen Luxury AW26) */}
+        {card.surfaceType === "travertine-courtyard" && (
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            {/* Warm Mediterranean Travertine Plaster Tone */}
+            <div className="absolute inset-0 bg-[#E8DFC8]" />
+            <svg className="absolute inset-0 w-full h-full opacity-20" xmlns="http://www.w3.org/2000/svg">
+              <filter id="travertineGrain">
+                <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="3" stitchTiles="stitch" />
+                <feColorMatrix type="matrix" values="0 0 0 0 0.1  0 0 0 0 0.08  0 0 0 0 0.05  0 0 0 0.12 0" />
+              </filter>
+              <rect width="100%" height="100%" filter="url(#travertineGrain)" />
+            </svg>
+
+            {/* Overhead Architectural Travertine Beam casting sharp geometric shadow */}
+            <div className="absolute top-0 right-0 w-44 sm:w-56 h-14 sm:h-18 bg-[#F4ECDC] shadow-xl border-b border-l border-[#D6C5AA] z-5" />
+            {/* Sharp diagonal shadow cast across the wall */}
+            <div
+              className="absolute top-0 right-0 w-full h-full pointer-events-none opacity-45"
+              style={{
+                background: "linear-gradient(125deg, transparent 0%, transparent 42%, rgba(55, 45, 30, 0.45) 43%, rgba(40, 30, 20, 0.5) 100%)",
+              }}
+            />
+            {/* Soft dappled foliage shadow on the wall */}
+            <div
+              className="absolute inset-0 pointer-events-none opacity-20"
+              style={{
+                background: "radial-gradient(circle at 15% 45%, rgba(0,0,0,0.4) 0%, transparent 60%)",
+              }}
+            />
+          </div>
+        )}
+
+        {/* L. Limestone Plaster Wall (Exact match to Image 2: Raw Stitch Drop Shoulder) */}
+        {card.surfaceType === "stone-wall" && (
+          <div className="absolute inset-0 pointer-events-none overflow-hidden">
+            <div className="absolute inset-0 bg-[#EFE8DE]" />
+            <svg className="absolute inset-0 w-full h-full opacity-30" xmlns="http://www.w3.org/2000/svg">
+              <filter id="stuccoNoise">
+                <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="4" stitchTiles="stitch" />
+                <feColorMatrix type="matrix" values="0 0 0 0 0.2  0 0 0 0 0.18  0 0 0 0 0.15  0 0 0 0.18 0" />
+              </filter>
+              <rect width="100%" height="100%" filter="url(#stuccoNoise)" />
+            </svg>
+            <div
+              className="absolute inset-0"
+              style={{
+                background: "radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.6) 0%, rgba(239, 232, 222, 0.1) 60%, rgba(214, 199, 178, 0.3) 100%)",
+              }}
+            />
+          </div>
+        )}
+
+        {/* M. Custom Gradient Background */}
         {card.gradientEnabled && (
           <div
             className="absolute inset-0 pointer-events-none"
@@ -728,6 +817,92 @@ export function StudioCanvas({
                 </linearGradient>
               </defs>
             </svg>
+          </div>
+        )}
+
+        {/* F. Travertine Architectural Stone Blocks in Bottom-Left Corner (Exact match to Image 2) */}
+        {card.showStoneBlocks && (
+          <div className="absolute bottom-0 left-0 z-25 pointer-events-none drop-shadow-xl select-none">
+            <div className="relative">
+              {/* Back taller stone pillar */}
+              <div className="w-16 sm:w-20 h-32 sm:h-40 rounded-t-sm bg-gradient-to-r from-[#D8C9B4] to-[#EAE0D2] border-t border-r border-[#C8B7A0] shadow-md relative overflow-hidden">
+                <div className="absolute top-6 left-3 w-3 h-2 rounded-full bg-[#A89680]/30 blur-[0.5px]" />
+                <div className="absolute top-16 left-8 w-4 h-2 rounded-full bg-[#A89680]/25 blur-[0.5px]" />
+                <div className="absolute top-28 left-4 w-2 h-3 rounded-full bg-[#A89680]/30 blur-[0.5px]" />
+              </div>
+              {/* Front shorter stone block */}
+              <div className="absolute bottom-0 left-0 w-22 sm:w-28 h-18 sm:h-24 rounded-t-sm bg-gradient-to-r from-[#CBB9A0] via-[#DFD3C0] to-[#EAE0D2] border-t border-r border-[#B8A68F] shadow-lg overflow-hidden">
+                <div className="absolute top-3 left-6 w-5 h-2 rounded-full bg-[#A89680]/35 blur-[0.5px]" />
+                <div className="absolute top-10 left-12 w-3 h-2 rounded-full bg-[#A89680]/30 blur-[0.5px]" />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* G. Potted Tropical Plant in Minimalist Ceramic Planter (Exact match to Image 5) */}
+        {card.showPottedPlant && (
+          <div className="absolute bottom-4 sm:bottom-6 right-2 sm:right-4 z-25 pointer-events-none drop-shadow-2xl select-none">
+            <svg viewBox="0 0 160 260" className="w-24 sm:w-32 h-auto">
+              <path d="M80 180 Q 95 120 120 70 Q 140 100 110 160 Z" fill="#14532D" />
+              <path d="M80 180 Q 50 110 30 60 Q 60 80 75 150 Z" fill="#166534" />
+              <path d="M80 180 Q 110 100 145 110 Q 130 145 90 175 Z" fill="#15803D" />
+              <path d="M80 180 Q 60 90 85 30 Q 105 70 85 160 Z" fill="#14532D" />
+              <path d="M80 180 Q 40 130 20 140 Q 35 170 75 180 Z" fill="#166534" />
+              <path d="M80 180 Q 82 120 85 30" stroke="#14532D" strokeWidth="2.5" fill="none" />
+              <path d="M80 180 Q 60 120 30 60" stroke="#14532D" strokeWidth="2" fill="none" />
+              <path d="M80 180 Q 105 130 120 70" stroke="#14532D" strokeWidth="2" fill="none" />
+              <path d="M50 180 L 110 180 L 102 245 L 58 245 Z" fill="#F8FAFC" stroke="#E2E8F0" strokeWidth="1.5" />
+              <ellipse cx="80" cy="180" rx="30" ry="6" fill="#D6D3D1" />
+              <ellipse cx="80" cy="180" rx="27" ry="5" fill="#57534E" />
+              <ellipse cx="80" cy="245" rx="22" ry="4" fill="#CBD5E1" opacity="0.6" />
+            </svg>
+          </div>
+        )}
+
+        {/* H. Swimming Pool / Reflection Pool Edge at Bottom (Image 5) */}
+        {card.showPoolEdge && (
+          <div className="absolute bottom-0 inset-x-0 h-10 sm:h-12 z-25 pointer-events-none overflow-hidden border-t-2 border-[#D6C7B2] shadow-inner">
+            <div className="w-full h-full bg-gradient-to-b from-[#2DD4BF]/60 via-[#14B8A6]/70 to-[#0F766E]/80 backdrop-blur-xs relative">
+              <svg className="w-full h-full opacity-40" preserveAspectRatio="none" viewBox="0 0 400 40">
+                <path d="M0 10 Q 50 18 100 10 T 200 12 T 300 8 T 400 10 L 400 40 L 0 40 Z" fill="rgba(255,255,255,0.4)" />
+                <path d="M0 20 Q 70 26 140 20 T 280 22 T 400 18 L 400 40 L 0 40 Z" fill="rgba(255,255,255,0.2)" />
+              </svg>
+            </div>
+          </div>
+        )}
+
+        {/* I. Traditional Ornate Festive Alpona Frame Border (Exact match to Image 4: Apex Sharodiya) */}
+        {card.showAlponaBorder && (
+          <div
+            className="absolute inset-0 pointer-events-none z-30 m-3 sm:m-4 rounded-2xl"
+            style={{
+              border: `10px solid ${card.alponaBorderColor || "#E11D48"}`,
+              boxShadow: "inset 0 0 12px rgba(0,0,0,0.15)",
+            }}
+          >
+            <div
+              className="absolute inset-0 m-0.5 rounded-xl border border-white/50"
+              style={{
+                outline: `2px dashed rgba(255,255,255,0.7)`,
+                outlineOffset: "-4px",
+              }}
+            />
+          </div>
+        )}
+
+        {/* J. 3D Sculpted Festive Celebration Emblem (Exact match to Image 4: Apex শারদীয় উৎসব No. 1 স্টাইলে) */}
+        {card.showFestiveBadge && (
+          <div className="absolute top-5 left-5 z-35 pointer-events-none drop-shadow-[0_12px_24px_rgba(225,29,72,0.4)] animate-in fade-in zoom-in duration-300">
+            <div className="relative p-3 rounded-2xl bg-gradient-to-br from-[#E11D48] via-[#BE185D] to-[#9D174D] border-2 border-pink-200/60 shadow-xl flex flex-col items-center justify-center text-center max-w-[130px] sm:max-w-[150px]">
+              <div className="text-xl sm:text-2xl leading-none mb-0.5 filter drop-shadow">🪷</div>
+              <div className="text-[10px] font-bold text-pink-100 tracking-wider">
+                {card.festiveBadgeText || "শারদীয় উৎসব"}
+              </div>
+              <div className="text-xs sm:text-sm font-black text-amber-300 tracking-wide uppercase leading-tight drop-shadow-sm mt-0.5">
+                NO. 1 স্টাইল
+              </div>
+              <div className="w-10 h-0.5 bg-gradient-to-r from-transparent via-amber-300 to-transparent mt-1" />
+            </div>
           </div>
         )}
 
@@ -913,6 +1088,54 @@ export function StudioCanvas({
           </div>
         )}
 
+        {/* 6B. HERO PRODUCT HEADLINE (EXACT MATCH TO IMAGE 2: STRIPED DROP SHOULDER) */}
+        {card.showProductHeadline && (
+          <div className="absolute top-16 sm:top-18 inset-x-0 z-30 pointer-events-none text-center px-4 select-none animate-in fade-in duration-300">
+            <div
+              className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-none uppercase"
+              style={{ color: card.headlineColor || "#1B4332" }}
+            >
+              {card.headlineMain || "STRIPED"}
+            </div>
+            <div className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tight leading-none uppercase text-stone-900 mt-0.5">
+              {card.headlineSecondary || "DROP SHOULDER"}
+            </div>
+            {card.headlineSub && (
+              <div className="text-[9px] sm:text-[10px] font-semibold tracking-widest text-stone-600 mt-2 font-mono">
+                {card.headlineSub}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* 6C. MINIMALIST SPACED FOOTER CTA (EXACT MATCH TO IMAGE 2: SHOP NOW | RAWSTITCH.COM.BD) */}
+        {card.showFooterCta && (
+          <div className="absolute bottom-5 inset-x-0 z-30 pointer-events-none text-center select-none animate-in fade-in duration-300">
+            <div className="inline-block px-4 py-1 rounded-full bg-white/75 backdrop-blur-xs text-[9px] sm:text-[10px] font-bold tracking-[0.25em] text-stone-800 uppercase border border-stone-300/70 shadow-2xs">
+              {card.footerCtaText || "SHOP NOW | RAWSTITCH.COM.BD"}
+            </div>
+          </div>
+        )}
+
+        {/* 6D. SUB-BRAND / LUXURY CATEGORY BADGE (EXACT MATCH TO IMAGE 1 PLATINUM / IMAGE 5 LUXURY) */}
+        {card.showSubBrandBadge && (
+          <div
+            className={`absolute z-30 pointer-events-none select-none ${
+              card.subBrandBadgePosition === "top-right"
+                ? "top-6 right-6 text-right"
+                : card.subBrandBadgePosition === "bottom-right"
+                ? "bottom-7 right-6 text-right"
+                : "bottom-7 left-6 text-left"
+            }`}
+          >
+            <div className={`text-xs sm:text-sm font-black tracking-[0.35em] uppercase font-serif drop-shadow-xs ${
+              isLightTone ? "text-stone-900/90" : "text-amber-100"
+            }`}>
+              {card.subBrandBadgeText || "PLATINUM"}
+            </div>
+          </div>
+        )}
+
         {/* ================================================================= */}
         {/* 7. ARCHITECTURAL 3D PEDESTAL STAND                                */}
         {/* ================================================================= */}
@@ -995,6 +1218,66 @@ export function StudioCanvas({
               }}
               className="transform-gpu transition-all"
             />
+          </div>
+        )}
+
+        {/* ================================================================= */}
+        {/* 8C. REALISTIC MANNEQUIN STAND (EXACT MATCH TO IMAGES 1 & 5)       */}
+        {/* ================================================================= */}
+        {card.mannequinStand && card.mannequinStand !== "none" && (
+          <div
+            className="absolute inset-x-0 bottom-3 sm:bottom-4 flex justify-center pointer-events-none z-15"
+            style={{
+              transform: `translateX(${transform.offsetX}px)`,
+            }}
+          >
+            {card.mannequinStand === "metallic-tripod" ? (
+              <svg viewBox="0 0 160 120" className="w-28 sm:w-36 h-auto drop-shadow-lg">
+                <ellipse cx="80" cy="108" rx="45" ry="8" fill="rgba(0,0,0,0.3)" filter="blur(2px)" />
+                <rect x="78" y="0" width="4" height="96" fill="url(#chromePole)" />
+                <rect x="76" y="86" width="8" height="6" rx="1.5" fill="#94A3B8" stroke="#64748B" strokeWidth="0.5" />
+                <path d="M80 94 L 40 106 L 44 110 L 80 98 Z" fill="url(#chromeLeg)" />
+                <path d="M80 94 L 120 106 L 116 110 L 80 98 Z" fill="url(#chromeLeg)" />
+                <path d="M80 94 L 62 108 L 66 111 L 80 98 Z" fill="#94A3B8" />
+                <path d="M80 94 L 98 108 L 94 111 L 80 98 Z" fill="#94A3B8" />
+                <circle cx="80" cy="95" r="4.5" fill="#CBD5E1" stroke="#64748B" strokeWidth="0.5" />
+                <defs>
+                  <linearGradient id="chromePole" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#94A3B8" />
+                    <stop offset="50%" stopColor="#FFFFFF" />
+                    <stop offset="100%" stopColor="#64748B" />
+                  </linearGradient>
+                  <linearGradient id="chromeLeg" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#CBD5E1" />
+                    <stop offset="50%" stopColor="#FFFFFF" />
+                    <stop offset="100%" stopColor="#64748B" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            ) : (
+              <svg viewBox="0 0 160 120" className="w-28 sm:w-36 h-auto drop-shadow-xl">
+                <ellipse cx="80" cy="108" rx="45" ry="8" fill="rgba(60,30,0,0.35)" filter="blur(2px)" />
+                <rect x="78" y="0" width="4" height="96" fill="url(#goldPole)" />
+                <rect x="76" y="86" width="8" height="6" rx="1.5" fill="#D97706" stroke="#92400E" strokeWidth="0.5" />
+                <path d="M80 94 L 40 106 L 44 110 L 80 98 Z" fill="url(#goldLeg)" />
+                <path d="M80 94 L 120 106 L 116 110 L 80 98 Z" fill="url(#goldLeg)" />
+                <path d="M80 94 L 62 108 L 66 111 L 80 98 Z" fill="#B45309" />
+                <path d="M80 94 L 98 108 L 94 111 L 80 98 Z" fill="#B45309" />
+                <circle cx="80" cy="95" r="4.5" fill="#FDE68A" stroke="#B45309" strokeWidth="0.5" />
+                <defs>
+                  <linearGradient id="goldPole" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#B45309" />
+                    <stop offset="45%" stopColor="#FDE68A" />
+                    <stop offset="100%" stopColor="#92400E" />
+                  </linearGradient>
+                  <linearGradient id="goldLeg" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#D97706" />
+                    <stop offset="40%" stopColor="#FEF08A" />
+                    <stop offset="100%" stopColor="#92400E" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            )}
           </div>
         )}
 

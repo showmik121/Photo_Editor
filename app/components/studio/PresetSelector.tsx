@@ -22,6 +22,12 @@ export const CATEGORIES: PresetCategoryConfig[] = [
 ];
 
 export const PRESET_CATEGORIES: Record<string, PresetCategoryKey> = {
+  // New Commercial Campaigns (Reference Styles)
+  "illiyeen-desert-aw26": "fashion",
+  "rawstitch-drop-shoulder": "fashion",
+  "rawstitch-ceramic-flatlay": "fashion",
+  "apex-festive-alpona": "festive",
+  "illiyeen-luxury-courtyard": "fashion",
   // Modern
   "modern-gradient": "modern",
   "clean-ecommerce": "modern",
@@ -69,6 +75,16 @@ export function PresetSelector({
 
   const getPresetIcon = (id: string) => {
     switch (id) {
+      case "illiyeen-desert-aw26":
+        return "🏜️";
+      case "rawstitch-drop-shoulder":
+        return "👕";
+      case "rawstitch-ceramic-flatlay":
+        return "🧱";
+      case "apex-festive-alpona":
+        return "🪷";
+      case "illiyeen-luxury-courtyard":
+        return "🏛️";
       case "modern-gradient":
         return "🎨";
       case "clean-ecommerce":
